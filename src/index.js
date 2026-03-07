@@ -1,15 +1,24 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
+import reservationRoutes from './routes/reservationRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-mongoose.connect('mongodb://localhost:27017/CarsHelp').then(()=> {
-    console.log('Connected to MongoDB');
-}).catch((err) => {
-    console.error('Error connecting to MongoDB:', err);
-});
-app.use('/routes',routes);
+
+// Middlewares
+app.use(cors());
 app.use(express.json());
-app.listen(PORT, ()=> {
-    console.log(`server is running on port ${PORT}`)
-})
+
+// MongoDB connection
+mongoose.connect('mongodb://localhost:27017/CarsHelp')
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('MongoDB error:', err));
+
+// Routes
+app.use('/api/reservations', reservationRoutes);
+
+// Server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
