@@ -5,6 +5,8 @@ import './App.css'
 import ReservationForm from './components/ReservationForm';
 import AboutPage from './pages/AboutPage';
 import AdminDashboard from './pages/AdminDashboard';
+import DriverDashboard from './pages/DriverDashboard';
+import LoginPage from './pages/LoginPage';
 function App() {
 
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="/reserve" element={<ReservationForm />} />
         <Route path='/about' element={<AboutPage />} />
         <Route path='/AdminDashboard' element={<AdminDashboard />} />
+        <Route path='/DriverDashboard' element={<DriverDashboard />} />
+        <Route path='/login' element={<LoginPage />} />
       </Routes>
       </Layout>
       </BrowserRouter>

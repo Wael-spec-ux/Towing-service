@@ -15,7 +15,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-gray-900/95 backdrop-blur-md border-b border-gray-800">
+    <header className="top-0 z-50 bg-gray-900/95 backdrop-blur-md border-b border-gray-800">
       {/* Top Bar */}
       <div className="hidden md:block bg-gradient-to-r from-blue-900/30 to-gray-900">
         <div className="container mx-auto px-6 py-2">
@@ -76,14 +76,14 @@ const Header = () => {
                 )}
               </Link>
             ))}
-            {location.pathname === '/AdminDashboard' && (
+            {(location.pathname === '/AdminDashboard' || location.pathname === '/DriverDashboard' ) &&(
   <button
     onClick={() => navigate("/")}
     className="ml-4 px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg font-semibold text-sm transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-red-500/20"
   >
     Log out
   </button>
-) || (  <button
+) || ((location.pathname === '/login')&&(<button></button> )) ||(  <button
     onClick={() => navigate("/reserve")}
     className="ml-4 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-semibold text-sm transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/20"
   >

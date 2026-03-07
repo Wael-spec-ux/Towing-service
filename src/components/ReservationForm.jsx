@@ -29,7 +29,9 @@ const ReservationForm = () => {
     transportFrom: "",
     transportTo: "",
     transportTime: "",
-    specialInstructions: ""
+    specialInstructions: "",
+    status: "En attente", 
+    assignedDriver: null
   });
 
   const [errors, setErrors] = useState({});
