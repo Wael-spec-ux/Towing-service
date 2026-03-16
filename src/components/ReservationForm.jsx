@@ -31,24 +31,12 @@ const ReservationForm = () => {
     transportTime: "",
     specialInstructions: "",
     status: "En attente", 
-    assignedDriver: null
+    assignedDriver: "Non assigné"
   });
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Car types
-  const carTypes = [
-    "Sedan",
-    "SUV",
-    "Truck",
-    "Van",
-    "Motorcycle",
-    "Sports Car",
-    "Electric Vehicle",
-    "Luxury Car",
-    "Other"
-  ];
 
   // Service types
   const serviceTypes = [
@@ -118,7 +106,7 @@ const ReservationForm = () => {
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
-    if (!formData.carType) newErrors.carType = "Car type is required";
+    if (!formData.carType.trim()) newErrors.carType = "Car type is required";
 
     // Service-specific validation
     if (formData.serviceType === "panne") {
@@ -144,7 +132,7 @@ const ReservationForm = () => {
       // Simulate API call
        try {
     setIsSubmitting(true);
-     const response = await fetch('http://localhost:3000/api/reservations', {
+     const response = await fetch('http://localhost:3000/createReservation', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -319,22 +307,14 @@ const ReservationForm = () => {
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Car Type *
                     </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      {carTypes.map((type) => (
-                        <button
-                          key={type}
-                          type="button"
-                          onClick={() => handleChange({ target: { name: "carType", value: type } })}
-                          className={`px-4 py-3 rounded-lg border transition-all ${formData.carType === type 
-                            ? "bg-blue-600 border-blue-500 text-white" 
-                            : "bg-gray-900 border-gray-700 text-gray-300 hover:border-blue-500 hover:text-blue-400"
-                          }`}
-                        >
-                          <Car className="w-5 h-5 inline-block mr-2" />
-                          {type}
-                        </button>
-                      ))}
-                    </div>
+                    <input
+                      type="text"
+                      name="carType"
+                      value={formData.carType}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 bg-gray-900 border ${errors.carType ? "border-red-500" : "border-gray-700"} rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                      placeholder="Hundai Elantra 2015"
+                    />
                     {errors.carType && (
                       <p className="mt-1 text-sm text-red-400">{errors.carType}</p>
                     )}
@@ -604,7 +584,7 @@ const ReservationForm = () => {
               
               <div className="mt-6 p-3 bg-blue-900/30 rounded-lg">
                 <div className="text-blue-300 font-semibold mb-1">Emergency Hotline</div>
-                <div className="text-2xl font-bold text-white">1-800-SOS-CARS</div>
+                <div className="text-2xl font-bold text-white">+216 97 354 009</div>
               </div>
             </div>
 

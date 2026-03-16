@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Truck, Shield, Eye, EyeOff, ChevronRight, AlertCircle, User } from "lucide-react";
-
+import { AdminLogin, DriverLogin } from "../api/LoginAPI";
+import { useNavigate } from "react-router";
 // ── Mock credentials ──────────────────────────────────────────────────────────
 const CREDENTIALS = {
   admin: [{ email: "admin@topdepannage.com", password: "admin123", name: "Administrateur" }],
@@ -45,25 +46,27 @@ export default function LoginPage({ onLogin }) {
     setPassword("");
     setError("");
   };
+const navigate = useNavigate();
+const handleLogin = async () => {
+  setError("");
+  if (!email.trim() || !password.trim()) {
+    setError("Veuillez remplir tous les champs.");
+    return;
+  }
+  setLoading(true);
+  try {
+    const result = role === "admin"
+      ? await AdminLogin({ email, password })
+      : await DriverLogin({ email, password });
 
-  const handleLogin = () => {
-    setError("");
-    if (!email.trim() || !password.trim()) {
-      setError("Veuillez remplir tous les champs.");
-      return;
-    }
-    setLoading(true);
-    setTimeout(() => {
-      const list = CREDENTIALS[role] ?? [];
-      const match = list.find((c) => c.email === email && c.password === password);
-      if (match) {
-        onLogin?.({ role, ...match });
-      } else {
-        setError("Email ou mot de passe incorrect.");
-        setLoading(false);
-      }
-    }, 900);
-  };
+    onLogin?.({ role, ...result });
+    navigate(role === "admin" ? "/AdminDashboard" : "/DriverDashboard");
+  } catch {
+    setError("Email ou mot de passe incorrect.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") handleLogin();

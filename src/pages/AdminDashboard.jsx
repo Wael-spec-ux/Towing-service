@@ -217,20 +217,6 @@ const AdminDashboard = () => {
     setShowAssignModal(false);
   };
 
-  const handleCompleteReservation = (reservationId) => {
-    const reservation = reservations.find(r => r.id === reservationId);
-    setReservations(prev => prev.map(res =>
-      res.id === reservationId ? { ...res, status: "Terminé" } : res
-    ));
-    if (reservation && reservation.assignedDriver) {
-      setDrivers(prev => prev.map(driver =>
-        driver.id === reservation.assignedDriver
-          ? { ...driver, status: "Disponible" }
-          : driver
-      ));
-    }
-  };
-
   const handleDeleteDriver = (driverId) => {
     if (window.confirm("Êtes-vous sûr de vouloir supprimer ce chauffeur ?")) {
       setDrivers(prev => prev.filter(driver => driver.id !== driverId));
@@ -675,14 +661,6 @@ const AdminDashboard = () => {
                             className="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
                           >
                             Assigner
-                          </button>
-                        )}
-                        {reservation.status === "En cours" && (
-                          <button
-                            onClick={() => handleCompleteReservation(reservation.id)}
-                            className="px-3 py-1 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 transition-colors"
-                          >
-                            Terminer
                           </button>
                         )}
                         <button className="p-1 text-gray-400 hover:text-white">
