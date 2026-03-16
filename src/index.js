@@ -1,23 +1,23 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import reservationRoutes from './routes/reservationRoutes.js';
-
+import Routes from './routes/Routes.js';
+import dotenv from 'dotenv';
 const app = express();
-const PORT = process.env.PORT || 3000;
+dotenv.config();
+const PORT = process.env.PORT;
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
 
 // MongoDB connection
-mongoose.connect('mongodb://localhost:27017/CarsHelp')
+mongoose.connect(process.env.BD_URL)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB error:', err));
 
 // Routes
-app.use('/api/reservations', reservationRoutes);
-
+app.use('/',Routes);
 // Server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
