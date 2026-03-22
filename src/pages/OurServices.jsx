@@ -12,7 +12,12 @@ import {
   Truck,
   Star
 } from "lucide-react";
+import { useEffect } from "react";
+import { verifyTokenExistInLocalStorage } from "../components/VerifTokenExist";
 function OurServices() {
+    useEffect(() => {
+      verifyTokenExistInLocalStorage();
+    }, []);
     const services = [
     {
       title: "Dépannage 24/7",

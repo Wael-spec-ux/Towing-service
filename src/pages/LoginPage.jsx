@@ -57,7 +57,7 @@ const handleLogin = async () => {
   try {
     const result = role === "admin"
       ? await AdminLogin({ email, password })
-      : await DriverLogin({ email, password });
+      : await DriverLogin({ email,password });
 
     onLogin?.({ role, ...result });
     navigate(role === "admin" ? "/AdminDashboard" : "/DriverDashboard");
@@ -67,6 +67,9 @@ const handleLogin = async () => {
     setLoading(false);
   }
 };
+const HandleForgotPassword =()=>{
+  navigate("/forgotPassword");
+}
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") handleLogin();
@@ -272,6 +275,9 @@ const handleLogin = async () => {
                 <ChevronRight className="w-4 h-4" />
               </>
             )}
+          </button>
+          <button className="text-sm text-blue-400 hover:text-blue-300 transition-colors mt-4" onClick={HandleForgotPassword}>
+            Mot de passe oublié?
           </button>
         </div>
 

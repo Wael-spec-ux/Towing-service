@@ -1,19 +1,11 @@
-async function reservationApi(formData) {
-  const response = await fetch('http://localhost:3000/api/reservations', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(formData)
-  });
 
-  const result = await response.json();
+export async function GetAllReservations() {
+  const response = await fetch("http://localhost:3000/getAllReservations",{
+                headers:{
+                    "Authorization": `Bearer ${localStorage.getItem('token')}`
+                }});
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+    return data;
 
-  if (!response.ok) {
-    throw new Error(result.message || 'Reservation failed');
-  }
-
-  return result;
-}
-
-export default reservationApi;
+  };

@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
 import { Menu, X, Phone, MapPin, User } from "lucide-react";
-
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
+  const token = localStorage.getItem('ResetPasswordToken');
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Services", path: "/services" },
@@ -77,18 +76,18 @@ const Header = () => {
               </Link>
             ))}
             {(location.pathname === '/AdminDashboard' || location.pathname === '/DriverDashboard' ) &&(
-  <button
-    onClick={() => {navigate("/");localStorage.removeItem('token');} }
-    className="ml-4 px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg font-semibold text-sm transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-red-500/20"
-  >
-    Log out
-  </button>
-) || ((location.pathname === '/login')&&(<button></button> )) ||(  <button
-    onClick={() => navigate("/reserve")}
-    className="ml-4 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-semibold text-sm transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/20"
-  >
-    Book Now
-  </button>)}
+            <button
+              onClick={() => {navigate("/");localStorage.removeItem('token');localStorage.removeItem('DriverToken');} }
+              className="ml-4 px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg font-semibold text-sm transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-red-500/20"
+            >
+              Log out
+            </button>
+          ) || ((location.pathname === '/login' || location.pathname === '/reserve' || location.pathname === '/forgotPassword' || location.pathname === `/reset-password/${token}`)&&(<button></button> )) ||(  <button
+              onClick={() => navigate("/reserve")}
+              className="ml-4 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-semibold text-sm transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/20"
+            >
+              Book Now
+            </button>)}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -122,16 +121,19 @@ const Header = () => {
                   {item.name}
                 </Link>
               ))}
+              {(location.pathname === '/AdminDashboard' || location.pathname === '/DriverDashboard' ) &&(
               <button
-                onClick={() => {
-                  localStorage.removeItem('token');
-                  navigate("/");
-                  setIsMenuOpen(false);
-                }}
-                className="mt-2 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg font-semibold hover:from-red-700 hover:to-red-800 transition-all"
+                  onClick={() => {navigate("/");localStorage.removeItem('token');localStorage.removeItem('DriverToken');} }
+                className="ml-4 px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg font-semibold text-sm transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-red-500/20"
+                >
+                  Log out
+                </button>
+              ) || ((location.pathname === '/login' || location.pathname === '/reserve' || location.pathname === '/forgotPassword' || location.pathname === `/reset-password/${token}`)&&(<button></button> )) ||(  <button
+                  onClick={() => navigate("/reserve")}
+                className="ml-4 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-semibold text-sm transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/20"
               >
-                Log Out
-              </button>
+                Book Now
+              </button>)}
             </div>
           </div>
         )}

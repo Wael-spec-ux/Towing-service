@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight, Shield, Clock, MapPin } from "lucide-react";
-
+import { verifyTokenExistInLocalStorage } from "../components/VerifTokenExist";
 const HomePage = () => {
   const navigate = useNavigate();
-
+  useEffect(() => {
+    verifyTokenExistInLocalStorage();
+  }, []);
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black overflow-hidden">
       <div className="container mx-auto px-4 py-12 md:py-0 flex flex-col md:flex-row items-center justify-between min-h-screen">

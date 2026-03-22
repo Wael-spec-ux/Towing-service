@@ -27,6 +27,7 @@ export async function DriverLogin(formData) {
   });
 
   const result = await response.json();
+  localStorage.setItem('DriverToken', result.DriverToken);
 
   if (!response.ok) {
     throw new Error(result.message || 'login failed');

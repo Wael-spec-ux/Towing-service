@@ -12,7 +12,12 @@ import {
   Truck,
   Star
 } from "lucide-react";
+import { useEffect } from "react";
+import { verifyTokenExistInLocalStorage } from "../components/VerifTokenExist";
 function ContactUs() {
+    useEffect(() => {
+      verifyTokenExistInLocalStorage();
+    }, []);
     return (
         <div>
                   {/* CTA Section */}

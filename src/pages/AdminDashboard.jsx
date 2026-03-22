@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Users,
   Car,
@@ -26,106 +26,30 @@ import {
   Eye,
   MessageSquare
 } from "lucide-react";
-
+import { GetAllReservations } from "../api/reservationApi";
+import { GetAllDrivers } from "../api/DriverApi";
+import { AddDriver } from "../api/DriverApi";
 const AdminDashboard = () => {
-  const [reservations, setReservations] = useState([
-    {
-      id: "RES-001",
-      clientName: "Mohamed Ben Ali",
-      phone: "71 234 567",
-      serviceType: "Dépannage",
-      carType: "Peugeot 208",
-      location: "Ben Arous Centre",
-      problem: "Batterie morte",
-      status: "En attente",
-      time: "10:30",
-      date: "2024-01-21",
-      assignedDriver: null
-    },
-    {
-      id: "RES-002",
-      clientName: "Fatma Bouazizi",
-      phone: "98 765 432",
-      serviceType: "Remorquage",
-      carType: "Renault Clio",
-      location: "Rades",
-      problem: "Accident",
-      status: "En cours",
-      time: "11:15",
-      date: "2024-01-21",
-      assignedDriver: "DRV-001"
-    },
-    {
-      id: "RES-003",
-      clientName: "Karim Trabelsi",
-      phone: "55 123 456",
-      serviceType: "Changement pneu",
-      carType: "Toyota Corolla",
-      location: "Megrine",
-      problem: "Pneu crevé",
-      status: "Terminé",
-      time: "09:45",
-      date: "2024-01-21",
-      assignedDriver: "DRV-002"
-    },
-    {
-      id: "RES-004",
-      clientName: "Sami Ben Ammar",
-      phone: "22 333 444",
-      serviceType: "Dépannage",
-      carType: "Volkswagen Golf",
-      location: "Hammam Lif",
-      problem: "Panne moteur",
-      status: "En attente",
-      time: "14:20",
-      date: "2024-01-21",
-      assignedDriver: null,
-      email: ""
-    },
-  ]);
+  const [reservations, setReservations] = useState([]);
+  useEffect(() => {
+    const AllReservations = async () => {
+      const data = await GetAllReservations();
+      setReservations(data);
+          console.log("Reservations in AdminDashboard:", data);
+    };
+    AllReservations();
+  }, [ reservations.length ]);
+  
 
-  const [drivers, setDrivers] = useState([
-    {
-      id: "DRV-001",
-      name: "Ali Ben Salah",
-      phone: "71 111 222",
-      status: "En mission",
-      currentLocation: "Rades",
-      truckId: "TRK-001",
-      missionsToday: 3,
-      rating: 4.8
-    },
-    {
-      id: "DRV-002",
-      name: "Hichem Boukadida",
-      phone: "71 333 444",
-      status: "Disponible",
-      currentLocation: "Dépôt Ben Arous",
-      truckId: "TRK-002",
-      missionsToday: 2,
-      rating: 4.9
-    },
-    {
-      id: "DRV-003",
-      name: "Rami Chaabane",
-      phone: "71 555 666",
-      status: "Problème camion",
-      currentLocation: "Garage",
-      truckId: "TRK-003",
-      missionsToday: 0,
-      rating: 4.7
-    },
-    {
-      id: "DRV-004",
-      name: "Nabil Mansouri",
-      phone: "71 777 888",
-      status: "Disponible",
-      currentLocation: "Ben Arous Centre",
-      truckId: "TRK-004",
-      missionsToday: 1,
-      rating: 4.6
-    },
-  ]);
+  const [drivers, setDrivers] = useState([]);
+  useEffect(() => {
+    const fetchDrivers = async () => {
+      const data = await GetAllDrivers();
+      setDrivers(data);
+          console.log("Drivers in AdminDashboard:", data);
+    };
+    fetchDrivers();
+  }, [ drivers.length ]);
 
   const [trucks, setTrucks] = useState([
     {
@@ -175,7 +99,8 @@ const AdminDashboard = () => {
     phone: "",
     email: "",
     licenseNumber: "",
-    truckId: ""
+    truckId: "",
+    password: ""
   });
 
   const [newTruck, setNewTruck] = useState({
@@ -198,19 +123,19 @@ const AdminDashboard = () => {
   const stats = {
     totalReservations: reservations.length,
     pendingReservations: reservations.filter(r => r.status === "En attente").length,
-    activeDrivers: drivers.filter(d => d.status === "Disponible").length,
+    activeDrivers: drivers.filter(d => d.status === "available").length,
     availableTrucks: trucks.filter(t => t.status === "Opérationnel").length,
-    todayMissions: reservations.filter(r => r.date === "2024-01-21" && r.status === "Terminé").length
+    todayMissions: reservations.filter(r => r.createdAt === new Date().toISOString().split('T')[0] && r.status === "Terminé").length
   };
 
   const handleAssignDriver = (reservationId, driverId) => {
     setReservations(prev => prev.map(res =>
-      res.id === reservationId
+      res._id === reservationId
         ? { ...res, assignedDriver: driverId, status: "En cours" }
         : res
     ));
     setDrivers(prev => prev.map(driver =>
-      driver.id === driverId
+      driver._id === driverId
         ? { ...driver, status: "En mission", missionsToday: driver.missionsToday + 1 }
         : driver
     ));
@@ -234,22 +159,19 @@ const AdminDashboard = () => {
       truck.id === truckId ? { ...truck, status: "Opérationnel" } : truck
     ));
   };
-
   const handleAddDriver = (e) => {
     e.preventDefault();
-    const newDriverId = `DRV-${String(drivers.length + 1).padStart(3, "0")}`;
+    // const newDriverId = `DRV-${String(drivers.length + 1).padStart(3, "0")}`;
     const driverToAdd = {
-      id: newDriverId,
       name: newDriver.name,
       phone: newDriver.phone,
-      status: "Disponible",
-      currentLocation: "Dépôt Ben Arous",
       truckId: newDriver.truckId || "N/A",
-      missionsToday: 0,
-      rating: 0
-    };
+      email: newDriver.email || "N/A",
+      licenseNumber: newDriver.licenseNumber || "N/A",
+      password: newDriver.password ,};
+    AddDriver(driverToAdd);
     setDrivers(prev => [...prev, driverToAdd]);
-    setNewDriver({ name: "", phone: "", email: "", licenseNumber: "", truckId: "" });
+    setNewDriver({ name: "", phone: "", email: "", licenseNumber: "", truckId: "" , password:""});
     setShowNewDriverModal(false);
   };
 
@@ -272,10 +194,10 @@ const AdminDashboard = () => {
     setShowNewTruckModal(false);
   };
 
-  const availableDrivers = drivers.filter(driver => driver.status === "Disponible");
+  const availableDrivers = drivers.filter(driver => driver.status === "available");
 
   const filteredReservations = reservations.filter(reservation =>
-    reservation.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    reservation.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     reservation.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
     reservation.phone.includes(searchTerm)
   );
@@ -359,17 +281,14 @@ const AdminDashboard = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Camion Assigné (optionnel)</label>
-            <select
-              value={newDriver.truckId}
-              onChange={(e) => setNewDriver({ ...newDriver, truckId: e.target.value })}
+            <label className="block text-sm font-medium text-gray-300 mb-2">Mot de Passe</label>
+            <input
+              type="password"
+              value={newDriver.password}
+              onChange={(e) => setNewDriver({ ...newDriver, password: e.target.value })}
               className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Sélectionner un camion</option>
-              {trucks.filter(t => t.status === "Opérationnel").map(truck => (
-                <option key={truck.id} value={truck.id}>{truck.plate} - {truck.type}</option>
-              ))}
-            </select>
+              placeholder="123456789"
+            />
           </div>
           <div className="flex justify-end space-x-3 pt-4">
             <button
@@ -487,27 +406,31 @@ const AdminDashboard = () => {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
       <div className="bg-gray-800 rounded-2xl border border-gray-700 max-w-md w-full p-6">
         <h3 className="text-xl font-bold text-white mb-6">
-          Assigner un Chauffeur — {selectedReservation?.id}
+          Assigner un Chauffeur — {selectedReservation?._id}
         </h3>
         <div className="mb-4 p-4 bg-gray-900/50 rounded-lg">
           <div className="font-medium text-white mb-2">Détails de la mission :</div>
           <div className="text-sm text-gray-300 space-y-1">
-            <div>Client : {selectedReservation?.clientName}</div>
+            <div>Client : {selectedReservation?.firstName} {selectedReservation?.lastName}</div>
             <div>Service : {selectedReservation?.serviceType}</div>
-            <div>Localisation : {selectedReservation?.location}</div>
+            <div>
+              Localisation : {selectedReservation?.carLocation 
+              ? selectedReservation.carLocation 
+              : `From ${selectedReservation?.transportFrom} To ${selectedReservation?.transportTo}`}
+            </div>
           </div>
         </div>
         <div className="space-y-3 mb-6">
           <div className="text-gray-300 mb-2">Chauffeurs Disponibles :</div>
           {availableDrivers.length > 0 ? (
             availableDrivers.map(driver => (
-              <div key={driver.id} className="flex items-center justify-between p-3 bg-gray-900/50 rounded-lg">
+              <div key={driver._id} className="flex items-center justify-between p-3 bg-gray-900/50 rounded-lg">
                 <div>
                   <div className="font-medium text-white">{driver.name}</div>
                   <div className="text-sm text-gray-400">{driver.phone} • {driver.currentLocation}</div>
                 </div>
                 <button
-                  onClick={() => handleAssignDriver(selectedReservation.id, driver.id)}
+                  onClick={() => handleAssignDriver(selectedReservation._id, driver._id)}
                   className="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
                 >
                   Assigner
@@ -604,20 +527,17 @@ const AdminDashboard = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-700">
-                  {["ID", "Client", "Service", "Localisation", "Problème", "Statut", "Chauffeur", "Actions"].map(h => (
+                  {["Client", "Service", "Localisation", "Problème", "Statut", "Chauffeur", "Actions"].map(h => (
                     <th key={h} className="text-left p-4 text-gray-400 font-medium">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filteredReservations.map((reservation) => (
-                  <tr key={reservation.id} className="border-b border-gray-800 hover:bg-gray-800/50">
+                  <tr key={reservation._id} className="border-b border-gray-800 hover:bg-gray-800/50">
+
                     <td className="p-4">
-                      <div className="font-mono text-blue-400">{reservation.id}</div>
-                      <div className="text-sm text-gray-400">{reservation.time}</div>
-                    </td>
-                    <td className="p-4">
-                      <div className="font-medium">{reservation.clientName}</div>
+                      <div className="font-medium">{reservation.firstName} {reservation.lastName}</div>
                       <div className="text-sm text-gray-400">{reservation.phone}</div>
                     </td>
                     <td className="p-4">
@@ -627,13 +547,13 @@ const AdminDashboard = () => {
                     <td className="p-4">
                       <div className="flex items-center">
                         <MapPin className="w-4 h-4 mr-1 text-gray-400" />
-                        {reservation.location}
+                        {reservation.carLocation} {reservation.transportFrom }
                       </div>
                     </td>
                     <td className="p-4">
                       <div className="flex items-center">
                         <AlertCircle className="w-4 h-4 mr-1 text-yellow-400" />
-                        {reservation.problem}
+                        {reservation.problemDescription || "Aucun problème signalé"}
                       </div>
                     </td>
                     <td className="p-4">
@@ -691,7 +611,7 @@ const AdminDashboard = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {filteredDrivers.map((driver) => (
-              <div key={driver.id} className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-4">
+              <div key={driver._id} className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-4">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="font-bold text-lg">{driver.name}</h3>

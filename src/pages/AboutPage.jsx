@@ -13,8 +13,12 @@ import {
   Truck,
   Star
 } from "lucide-react";
-
+import { useEffect } from "react";
+import { verifyTokenExistInLocalStorage } from "../components/VerifTokenExist";
 const AboutPage = () => {
+    useEffect(() => {
+      verifyTokenExistInLocalStorage();
+    }, []);
   const teamMembers = [
     {
       name: "Mohamed Ali",
