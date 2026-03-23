@@ -1,3 +1,4 @@
+import {Truck} from "lucide-react";
 export function NewTruckModal({ newTruck, setNewTruck, drivers, handleAddTruck, setShowNewTruckModal }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
@@ -48,8 +49,8 @@ export function NewTruckModal({ newTruck, setNewTruck, drivers, handleAddTruck, 
                 className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Sélectionner un chauffeur</option>
-                {drivers.filter(d => d.status === "Disponible").map(driver => (
-                  <option key={driver.id} value={driver.name}>{driver.name}</option>
+                {drivers.filter(d => d.assignedTruck === null).map(driver => (
+                  <option key={driver._id} value={driver.name}>{driver.name}</option>
                 ))}
               </select>
             </div>

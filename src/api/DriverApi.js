@@ -62,3 +62,16 @@ export async function updateDriverStatusAndMissions(driverId, newStatus, newMiss
     console.log("updateDriverStatusAndMissions response:", data);
     return data;
 };
+export async function updateDriverStatus(id,status) {
+    const response=await fetch(`http://localhost:3000/updateDriverStatus`, {    
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ id, status })
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    return data;
+}

@@ -31,6 +31,10 @@
   import { AssignDriverModal } from "../components/AssignDriverModal";
   import { NewDriverModal } from "../components/NewDriverModal";
   import { NewTruckModal } from "../components/NewTruckModal";
+  import { createTruck, GetAllTrucks,AssignTruckToDriver,DeleteTruck } from "../api/TruckApi";
+  import { formatDate } from "../utils/FriendlyDate";
+  import { DeleteConfirmModal } from "../components/DeleteConfirmModal";
+import { DeleteDriverModal } from "../components/DeleteDriverModel";
   const AdminDashboard = () => {
     const [reservations, setReservations] = useState([]);
     useEffect(() => {
@@ -53,48 +57,15 @@
       fetchDrivers();
     }, []);
 
-    const [trucks, setTrucks] = useState([
-      {
-        id: "TRK-001",
-        plate: "204TU1234",
-        type: "Camion dépannage",
-        status: "En mission",
-        driver: "Ali Ben Salah",
-        lastMaintenance: "2024-01-15",
-        nextMaintenance: "2024-02-15",
-        location: "Rades"
-      },
-      {
-        id: "TRK-002",
-        plate: "204TU5678",
-        type: "Camion remorque",
-        status: "Opérationnel",
-        driver: "Hichem Boukadida",
-        lastMaintenance: "2024-01-10",
-        nextMaintenance: "2024-02-10",
-        location: "Dépôt Ben Arous"
-      },
-      {
-        id: "TRK-003",
-        plate: "204TU9101",
-        type: "Camion dépannage",
-        status: "En réparation",
-        driver: "Rami Chaabane",
-        lastMaintenance: "2024-01-05",
-        nextMaintenance: "2024-02-05",
-        location: "Garage"
-      },
-      {
-        id: "TRK-004",
-        plate: "204TU1121",
-        type: "Camion remorque",
-        status: "Opérationnel",
-        driver: "Nabil Mansouri",
-        lastMaintenance: "2024-01-12",
-        nextMaintenance: "2024-02-12",
-        location: "Ben Arous Centre"
-      },
-    ]);
+    const [trucks, setTrucks] = useState([]);
+    useEffect(() => {
+      const fetchTrucks = async () => {
+        const data = await GetAllTrucks();
+        setTrucks(data);
+            console.log("Trucks in AdminDashboard:", data);
+      };
+      fetchTrucks();
+    }, []);
 
     const [newDriver, setNewDriver] = useState({
       name: "",
@@ -155,27 +126,56 @@ const handleAssignDriver = async (reservationId, driverId) => {
   }
 };
 
-    const handleDeleteDriver = async (driverId) => {
-      if (window.confirm("Êtes-vous sûr de vouloir supprimer ce chauffeur ?")) {
-        try {
-          await DeleteDriver(driverId);
-          const updated = await GetAllDrivers();
-          setDrivers(updated);
-        } catch (err) {
-          console.error("Failed to delete driver:", err);
-        }
+    // const handleDeleteDriver = async (driverId) => {
+    //   if (window.confirm("Êtes-vous sûr de vouloir supprimer ce chauffeur ?")) {
+    //     try {
+    //       await DeleteDriver(driverId);
+    //       const updated = await GetAllDrivers();
+    //       setDrivers(updated);
+    //     } catch (err) {
+    //       console.error("Failed to delete driver:", err);
+    //     }
+    //   }
+    // };
+    const [deleteDriverModal, setDeleteDriverModal] = useState({ driverId: null, driverName: "", open: false })
+    const handleDeleteDriver = (driverId, driverName) => {
+      setDeleteDriverModal({ driverId, driverName, open: true })
+    }
+    const confirmDeleteDriver = async () => {
+      try {
+        await DeleteDriver(deleteDriverModal.driverId);
+        const updated = await GetAllDrivers();
+        setDrivers(updated);
+        setDeleteDriverModal({ driverId: null, open: false });
+      } catch (err) {
+        console.error("Failed to delete driver:", err);
       }
     };
 
-    const handleDeleteTruck = (truckId) => {
-      if (window.confirm("Êtes-vous sûr de vouloir supprimer ce camion ?")) {
-        setTrucks(prev => prev.filter(truck => truck.id !== truckId));
-      }
-    };
+    // const handleDeleteTruck = async (truckId, driverName) => {
+    //   if (window.confirm("Êtes-vous sûr de vouloir supprimer ce camion ?")) {
+    //     await DeleteTruck(truckId, driverName);
+    //     const update= await GetAllTrucks();
+    //     setTrucks(update);
+    //   }
+    // };
+    const [deleteModal, setDeleteModal] = useState({ open: false, truckId: null, driverName: "" })
+    const handleDeleteTruck = (truckId, driverName) => {
+     setDeleteModal({ open: true, truckId, driverName })
+   }
+
+   const confirmDelete = async () => {
+     await DeleteTruck(deleteModal.truckId);
+     const updated = await GetAllTrucks()
+     const secondupdate= await GetAllDrivers();
+     setTrucks(updated)
+     setDrivers(secondupdate)
+     setDeleteModal({ open: false, truckId: null, driverName: "" })
+   }
 
     const handleMarkTruckRepaired = (truckId) => {
       setTrucks(prev => prev.map(truck =>
-        truck.id === truckId ? { ...truck, status: "Opérationnel" } : truck
+        truck._id === truckId ? { ...truck, status: "Opérationnel" } : truck
       ));
     };
     const handleAddDriver = async(e) => {
@@ -196,12 +196,11 @@ const handleAssignDriver = async (reservationId, driverId) => {
       setShowNewDriverModal(false);
     };
 
-    const handleAddTruck = (e) => {
+    const handleAddTruck = async (e) => {
       e.preventDefault();
-      const newTruckId = `TRK-${String(trucks.length + 1).padStart(3, "0")}`;
+      // const newTruckId = `TRK-${String(trucks.length + 1).padStart(3, "0")}`;
       const plate = newTruck.serialNumber.toUpperCase();
       const truckToAdd = {
-        id: newTruckId,
         plate: plate,
         type: newTruck.type,
         status: "Opérationnel",
@@ -210,7 +209,11 @@ const handleAssignDriver = async (reservationId, driverId) => {
         nextMaintenance: newTruck.nextMaintenance || "N/A",
         location: newTruck.location
       };
-      setTrucks(prev => [...prev, truckToAdd]);
+      await AssignTruckToDriver(truckToAdd.plate, truckToAdd.driver);
+      await createTruck(truckToAdd);
+      console.log("Added truck:", truckToAdd);
+      const updated = await GetAllTrucks();
+      setTrucks(updated);
       setNewTruck({ serialNumber: "", type: "", status: "Opérationnel", location: "Dépôt Ben Arous", driver: "", lastMaintenance: "", nextMaintenance: "" });
       setShowNewTruckModal(false);
     };
@@ -218,20 +221,20 @@ const handleAssignDriver = async (reservationId, driverId) => {
     const availableDrivers = drivers.filter(driver => driver.status === "available");
 
     const filteredReservations = reservations.filter(reservation =>
-      reservation.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      reservation.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      reservation.phone.includes(searchTerm)
+      reservation.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      reservation.serviceType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      reservation.phone?.includes(searchTerm)
     );
 
     const filteredDrivers = drivers.filter(driver =>
-      driver.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      driver._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      driver.phone.includes(searchTerm)
+      driver.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      driver.status?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      driver.phone?.includes(searchTerm)
     );
 
     const filteredTrucks = trucks.filter(truck =>
       truck.plate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      truck.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      truck._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (truck.driver && truck.driver.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
@@ -437,18 +440,15 @@ const handleAssignDriver = async (reservationId, driverId) => {
                     </div>
                   </div>
                   <div className="flex justify-end space-x-2">
-                    <button className="p-2 text-gray-400 hover:text-blue-400 hover:bg-gray-700/50 rounded-lg">
-                      <Edit className="w-4 h-4" />
-                    </button>
                     <button
-                      onClick={() => handleDeleteDriver(driver._id)}
+                      onClick={() => handleDeleteDriver(driver._id, driver.name)}
                       className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-700/50 rounded-lg"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
-                    <button className="p-2 text-gray-400 hover:text-green-400 hover:bg-gray-700/50 rounded-lg">
+                    {/* <button className="p-2 text-gray-400 hover:text-green-400 hover:bg-gray-700/50 rounded-lg">
                       <MessageSquare className="w-4 h-4" />
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               ))}
@@ -471,7 +471,7 @@ const handleAssignDriver = async (reservationId, driverId) => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredTrucks.map((truck) => (
-                <div key={truck.id} className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-5">
+                <div key={truck._id} className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-5">
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h3 className="font-bold text-lg">{truck.plate}</h3>
@@ -500,21 +500,21 @@ const handleAssignDriver = async (reservationId, driverId) => {
                       <Calendar className="w-5 h-5 mr-3 text-gray-400" />
                       <div>
                         <div className="text-sm text-gray-400">Dernière Maintenance</div>
-                        <div className="font-medium">{truck.lastMaintenance}</div>
+                        <div className="font-medium">{formatDate(truck.lastMaintenance)}</div>
                       </div>
                     </div>
                     <div className="flex items-center">
                       <Calendar className="w-5 h-5 mr-3 text-gray-400" />
                       <div>
                         <div className="text-sm text-gray-400">Prochaine Maintenance</div>
-                        <div className="font-medium">{truck.nextMaintenance}</div>
+                        <div className="font-medium">{formatDate(truck.nextMaintenance)}</div>
                       </div>
                     </div>
                   </div>
                   <div className="flex justify-end space-x-2">
                     {truck.status === "En réparation" && (
                       <button
-                        onClick={() => handleMarkTruckRepaired(truck.id)}
+                        onClick={() => handleMarkTruckRepaired(truck._id)}
                         className="px-3 py-1 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 transition-colors flex items-center"
                       >
                         <Wrench className="w-4 h-4 mr-1" />
@@ -522,15 +522,12 @@ const handleAssignDriver = async (reservationId, driverId) => {
                       </button>
                     )}
                     <button
-                      onClick={() => handleDeleteTruck(truck.id)}
+                      onClick={() => handleDeleteTruck(truck._id, truck.driver)}
                       className="px-3 py-1 border border-red-700/50 text-red-400 rounded-lg text-sm hover:bg-red-900/30 transition-colors flex items-center"
                     >
                       <Trash2 className="w-4 h-4 mr-1" />
                       Supprimer
-                    </button>
-                    <button className="px-3 py-1 border border-gray-600 text-gray-300 rounded-lg text-sm hover:bg-gray-700 transition-colors">
-                      Détails
-                    </button>
+                    </button> 
                   </div>
                 </div>
               ))}
@@ -570,6 +567,22 @@ const handleAssignDriver = async (reservationId, driverId) => {
           handleAddTruck={handleAddTruck}
           setShowNewTruckModal={setShowNewTruckModal}
         />}
+        {
+          <DeleteConfirmModal
+            isOpen={deleteModal.open}
+            driverName={deleteModal.driverName}
+            onConfirm={confirmDelete}
+            onCancel={() => setDeleteModal({ open: false, truckId: null, driverName: "" })}
+          />
+        }
+        {
+          <DeleteDriverModal
+            isOpen={deleteDriverModal.open}
+            driverName={deleteDriverModal.driverName}
+            onConfirm={confirmDeleteDriver}
+            onCancel={() => setDeleteDriverModal({ driverId: null, open: false })}
+          />
+        }
       </div>
     );
   };
