@@ -1,7 +1,7 @@
 import express from 'express';
 import { createReservation,getAllReservations,editReservation,deleteReservation ,updateAssignedDriverAndStatus} from '../controllers/reservationController.js';
-import { createDriver,updateDriver ,getAllDrivers,deleteDriver,updateDriverStatusAndMissions} from '../controllers/DriverController.js'; 
-import { createTruck,updateTruck,getAllTrucks,deleteTruck } from '../controllers/truckController.js';
+import { createDriver,updateDriver ,getAllDrivers,deleteDriver,updateDriverStatusAndMissions,updateDriverStatus} from '../controllers/DriverController.js'; 
+import { createTruck,updateTruck,getAllTrucks,deleteTruck,assignTruckToDriver } from '../controllers/truckController.js';
 import { loginAdmin,createAdmin,updateAdminPassword} from '../controllers/AdminLogin.js';
 import { DriverLogin } from '../controllers/DriverLogin.js';
 import { verifyToken } from '../middleware/authMiddleware.js';
@@ -20,11 +20,13 @@ router.put('/updateDriverStatusAndMissions', verifyToken,(req,res)=>{updateDrive
 router.get('/getAllDrivers',verifyToken,(req,res)=>{getAllDrivers(req,res)});
 router.delete('/deleteDriver',verifyToken,(req,res)=>{deleteDriver(req,res)});
 router.post('/login/driver',DriverLogin);
+router.put('/updateDriverStatus',verifyToken,(req,res)=>{updateDriverStatus(req,res)});
 //Truck routes
 router.post('/createTruck', createTruck);
 router.put('/updateTruck', updateTruck);
-router.get('/getAllTrucks',getAllTrucks);
-router.delete('/deleteTruck',deleteTruck);
+router.get('/getAllTrucks',verifyToken,(req,res)=>{getAllTrucks(req,res)});
+router.delete('/deleteTruck',verifyToken,(req,res)=>{deleteTruck(req,res)});
+router.put('/assignTruckToDriver',verifyToken,(req,res)=>{assignTruckToDriver(req,res)});
 //login admin router
 router.post("/login/admin",loginAdmin);
 router.post("/create/admin",createAdmin);

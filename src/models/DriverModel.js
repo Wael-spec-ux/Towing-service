@@ -8,7 +8,7 @@ const driverSchema = new mongoose.Schema(
         email: { type: String, required: true, lowercase: true },
         password: { type: String, required: true },
         assignedTruck : { type: String , default: null },
-        missions: { type: Boolean, default: false },
+        missions: { type: Number, default: 0 },
         licenceNumber: { type: String, required: true },
         truckId: { type: String,default: null },
         rating: { type: Number, min: 1, max: 5  ,default: 5 },
