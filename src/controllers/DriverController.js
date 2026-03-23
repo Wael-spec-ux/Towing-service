@@ -26,15 +26,15 @@ export const updateDriver = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
-export const updateDriverStatus = async (req, res) => {
+export const updateDriverStatusAndMissions = async (req, res) => {
   try {
-    const { id,status} = req.body;
+    const { id,status,missions} = req.body;
     const driver = await Driver.findById(id);
     if (!driver) {
       return res.status(404).json({ message: 'Driver not found' });
     }
-    const updatedDriver = await Driver.findByIdAndUpdate(id, { status }, { new: true });
-    res.status(200).json({ message: 'Driver status updated successfully', driver: updatedDriver });
+    const updatedDriver = await Driver.findByIdAndUpdate(id, { status, missions }, { new: true });
+    res.status(200).json({ message: 'Driver status and missions updated successfully', driver: updatedDriver });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });

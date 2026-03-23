@@ -1,6 +1,6 @@
 import express from 'express';
 import { createReservation,getAllReservations,editReservation,deleteReservation ,updateAssignedDriverAndStatus} from '../controllers/reservationController.js';
-import { createDriver,updateDriver ,getAllDrivers,deleteDriver,updateDriverStatus} from '../controllers/DriverController.js'; 
+import { createDriver,updateDriver ,getAllDrivers,deleteDriver,updateDriverStatusAndMissions} from '../controllers/DriverController.js'; 
 import { createTruck,updateTruck,getAllTrucks,deleteTruck } from '../controllers/truckController.js';
 import { loginAdmin,createAdmin,updateAdminPassword} from '../controllers/AdminLogin.js';
 import { DriverLogin } from '../controllers/DriverLogin.js';
@@ -16,7 +16,7 @@ router.put('/updateAssignedDriverAndStatus', verifyToken,(req,res)=>{updateAssig
 // Driver routes
 router.post('/createDriver', verifyToken,(req,res)=>{createDriver(req,res)});
 router.put('/updateDriver', updateDriver);
-router.put('/updateDriverStatus', verifyToken,(req,res)=>{updateDriverStatus(req,res)});
+router.put('/updateDriverStatusAndMissions', verifyToken,(req,res)=>{updateDriverStatusAndMissions(req,res)});
 router.get('/getAllDrivers',verifyToken,(req,res)=>{getAllDrivers(req,res)});
 router.delete('/deleteDriver',verifyToken,(req,res)=>{deleteDriver(req,res)});
 router.post('/login/driver',DriverLogin);
