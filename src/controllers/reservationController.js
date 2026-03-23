@@ -1,3 +1,4 @@
+import e from 'express';
 import Reservation from '../models/Reservation.js';
 
 export const createReservation = async (req, res) => {
@@ -74,6 +75,23 @@ export const deleteReservation = async (req, res) => {
       return res.status(404).json({ message: 'Reservation not found' });
     }
     res.status(200).json({ message: 'Reservation deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const updateAssignedDriverAndStatus = async (req, res) => {
+  try {
+    const { id, assignedDriver, status } = req.body; 
+    const reservation = await Reservation.findById(id);
+    if (!reservation) {
+      return res.status(404).json({ message: 'Reservation not found' });
+    }
+    reservation.assignedDriver = assignedDriver;
+    reservation.status = status;
+    await reservation.save();
+    res.status(200).json({ message: 'Assigned driver and statusupdated successfully', reservation });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
