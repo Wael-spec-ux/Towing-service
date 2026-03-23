@@ -27,7 +27,7 @@
     MessageSquare
   } from "lucide-react";
   import { GetAllReservations,updateAssignedDriverAndStatus } from "../api/reservationApi";
-  import { GetAllDrivers,AddDriver,DeleteDriver,updateDriverStatus } from "../api/DriverApi";
+  import { GetAllDrivers,AddDriver,DeleteDriver,updateDriverStatusAndMissions } from "../api/DriverApi";
   import { AssignDriverModal } from "../components/AssignDriverModal";
   import { NewDriverModal } from "../components/NewDriverModal";
   import { NewTruckModal } from "../components/NewTruckModal";
@@ -134,7 +134,7 @@ const handleAssignDriver = async (reservationId, driverId) => {
   try {
     // Call APIs first
     await updateAssignedDriverAndStatus(reservationId, driverId, "En cours");
-    await updateDriverStatus(driverId, "En mission");
+    await updateDriverStatusAndMissions(driverId, "En mission", drivers.find(d => d._id === driverId)?.missions + 1 || 1);
 
     // Then update local state
     setReservations(prev => prev.map(res =>

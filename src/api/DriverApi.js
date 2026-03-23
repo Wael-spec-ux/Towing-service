@@ -48,17 +48,17 @@ export async function DeleteDriver(driverId) {
     return data;
 };
 
-export async function updateDriverStatus(driverId, newStatus) {
-  const response = await fetch(`http://localhost:3000/updateDriverStatus`, {
+export async function updateDriverStatusAndMissions(driverId, newStatus, newMissions) {
+  const response = await fetch(`http://localhost:3000/updateDriverStatusAndMissions`, {
     method: "PUT",
     headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${localStorage.getItem('token')}`
     },
-    body: JSON.stringify({ id: driverId, status: newStatus })
+    body: JSON.stringify({ id: driverId, status: newStatus, missions: newMissions })
   });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
-    console.log("updateDriverStatus response:", data);
+    console.log("updateDriverStatusAndMissions response:", data);
     return data;
 };
