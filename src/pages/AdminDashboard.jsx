@@ -98,7 +98,7 @@ import { DeleteDriverModal } from "../components/DeleteDriverModel";
       pendingReservations: reservations.filter(r => r.status === "En attente").length,
       activeDrivers: drivers.filter(d => d.status === "available").length,
       availableTrucks: trucks.filter(t => t.status === "Opérationnel").length,
-      todayMissions: reservations.filter(r => r.createdAt === new Date().toISOString().split('T')[0] && r.status === "Terminé").length
+      todayMissions: reservations.filter(r => new Date(r.createdAt).toISOString().split('T')[0] === new Date().toISOString().split('T')[0]).length
     };
 
 const handleAssignDriver = async (reservationId, driverId) => {
@@ -381,7 +381,7 @@ const handleAssignDriver = async (reservationId, driverId) => {
                             </button>
                           )}
                           <button className="p-1 text-gray-400 hover:text-white">
-                            <Eye className="w-5 h-5" />
+                            <CheckCircle className="w-5 h-5" />
                           </button>
                         </div>
                       </td>

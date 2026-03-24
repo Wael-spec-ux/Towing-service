@@ -1,7 +1,7 @@
 export async function GetAllDrivers() {
   const response = await fetch("http://localhost:3000/getAllDrivers",{
                 headers:{
-                    "Authorization": `Bearer ${localStorage.getItem('token')}`
+                    "Authorization": `Bearer ${localStorage.getItem('adminToken')}`
                 }});
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
@@ -13,7 +13,7 @@ export async function AddDriver(driverData) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${localStorage.getItem('token')}`
+      "Authorization": `Bearer ${localStorage.getItem('adminToken')}`
     },
     body: JSON.stringify(driverData)
   });
@@ -26,7 +26,7 @@ export async function UpdateDriver(driverData) {
     method: "PUT",
     headers: {
         "Content-Type": "application/json", 
-        "Authorization": `Bearer ${localStorage.getItem('token')}`
+        "Authorization": `Bearer ${localStorage.getItem('adminToken') || localStorage.getItem('driverToken')}`
     },
     body: JSON.stringify(driverData)
   });
@@ -39,7 +39,7 @@ export async function DeleteDriver(driverId) {
     method: "DELETE",
     headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem('token')}`
+        "Authorization": `Bearer ${localStorage.getItem('adminToken')}`
     },
     body: JSON.stringify({ id: driverId })
   });
@@ -53,7 +53,7 @@ export async function updateDriverStatusAndMissions(driverId, newStatus, newMiss
     method: "PUT",
     headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem('token')}`
+        "Authorization": `Bearer ${localStorage.getItem('adminToken') || localStorage.getItem('driverToken')}`
     },
     body: JSON.stringify({ id: driverId, status: newStatus, missions: newMissions })
   });
@@ -67,7 +67,7 @@ export async function updateDriverStatus(id,status) {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem('token')}`
+            "Authorization": `Bearer ${localStorage.getItem('adminToken') || localStorage.getItem('driverToken')}`
         },
         body: JSON.stringify({ id, status })
     });
@@ -75,3 +75,12 @@ export async function updateDriverStatus(id,status) {
     const data = await response.json();
     return data;
 }
+export async function GetDriverById(id) {
+  const response = await fetch(`http://localhost:3000/getDriverById/${id}`,{
+                headers:{
+                    "Authorization": `Bearer ${localStorage.getItem('adminToken') || localStorage.getItem('driverToken')}`
+                }});
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+    return data;
+    };

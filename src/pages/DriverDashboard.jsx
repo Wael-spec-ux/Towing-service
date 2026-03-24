@@ -24,73 +24,14 @@ import {
   ChevronDown,
   Plus,
 } from "lucide-react";
-
-// ─── Mock data ────────────────────────────────────────────────────────────────
-const DRIVER = {
-  id: "DRV-002",
-  name: "Hichem Boukadida",
-  phone: "71 333 444",
-  rating: 4.9,
-  status: "Disponible",
-  truckId: "TRK-002",
-};
-
-const TRUCK = {
-  id: "TRK-002",
-  plate: "204TU5678",
-  type: "Camion remorque",
-  status: "Opérationnel",
-  location: "Dépôt Ben Arous",
-  lastMaintenance: "2024-01-10",
-  nextMaintenance: "2024-02-10",
-  fuel: 50,
-};
-
-const INITIAL_TASKS = [
-  {
-    id: "RES-005",
-    clientName: "Aymen Haddad",
-    phone: "22 998 877",
-    serviceType: "Remorquage",
-    carType: "Citroën C3",
-    location: "Rades Meliane",
-    problem: "Accident",
-    status: "En attente",
-    time: "13:00",
-    date: "2024-01-21",
-    priority: "Urgent",
-  },
-  {
-    id: "RES-006",
-    clientName: "Leila Gharbi",
-    phone: "55 441 220",
-    serviceType: "Dépannage",
-    carType: "Ford Focus",
-    location: "Ben Arous Centre",
-    problem: "Panne moteur",
-    status: "En attente",
-    time: "14:30",
-    date: "2024-01-21",
-    priority: "Normal",
-  },
-  {
-    id: "RES-007",
-    clientName: "Khalil Jebali",
-    phone: "71 002 113",
-    serviceType: "Changement pneu",
-    carType: "Hyundai i20",
-    location: "Mégrine",
-    problem: "Pneu crevé",
-    status: "Terminé",
-    time: "09:00",
-    date: "2024-01-21",
-    priority: "Normal",
-  },
-];
-
+import { GetDriverById ,updateDriverStatus} from "../api/DriverApi";
+import { GetTruckByPlate } from "../api/TruckApi";
+import { FindTasksByAssignedDriverEqualsToDriverId ,changeTaskStatus} from "../api/reservationApi";
+import { useNavigate } from "react-router";
+import { useEffect } from "react";
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const statusStyles = {
-  "En attente": "bg-amber-500/15 text-amber-400 border border-amber-500/30",
+  // "En attente": "bg-amber-500/15 text-amber-400 border border-amber-500/30",
   "En cours":   "bg-sky-500/15 text-sky-400 border border-sky-500/30",
   "Terminé":    "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30",
 };
@@ -134,8 +75,12 @@ const Modal = ({ title, icon, onClose, children }) => (
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function DriverDashboard() {
-  const [tasks, setTasks] = useState(INITIAL_TASKS);
-  const [driverStatus, setDriverStatus] = useState(DRIVER.status);
+    const navigate = useNavigate();
+  const [driver, setDriver] = useState(null);
+  const [truck,setTruck]=useState(null);
+  const [tasks, setTasks] = useState([]);
+  const TRUCK = truck;
+  const [driverStatus, setDriverStatus] = useState(null);
   const [modal, setModal] = useState(null); // "problem" | "rest" | "message" | "detail" | "complete"
   const [selectedTask, setSelectedTask] = useState(null);
   const [problemText, setProblemText] = useState("");
@@ -143,22 +88,46 @@ export default function DriverDashboard() {
   const [problemType, setProblemType] = useState("Camion");
   const [restDate, setRestDate] = useState("");
   const [restReason, setRestReason] = useState("");
-  const [notifications, setNotifications] = useState([
-    { id: 1, text: "Nouvelle mission assignée — RES-005", read: false },
-    { id: 2, text: "Maintenance camion dans 30 jours", read: false },
-  ]);
-  const [showNotif, setShowNotif] = useState(false);
   const [submitted, setSubmitted] = useState(null);
+  useEffect(() => {
+    const fetchDriver = async () => {
+      const driverId = localStorage.getItem('driverId');
+      // Guard — no id → redirect to login
+      if (!driverId) {
+        navigate('/login');
+        return; // ← stop execution
+      }
 
-  const unread = notifications.filter((n) => !n.read).length;
+      const data = await GetDriverById(driverId);
+      const Tasks = await FindTasksByAssignedDriverEqualsToDriverId(data._id);
+      const Truck= await GetTruckByPlate(data.assignedTruck)
+      setDriver(data);
+      setDriverStatus(data.status)
+      setTasks(Tasks)
+      setTruck(Truck);
+      console.log("driver from the useEffect",data)
+      console.log("tasks from the useEffect",Tasks)
+      console.log("Truck from the useEffect",Truck)
+    };
+
+    fetchDriver();
+  }, []); // ← runs once on mount
+
+  const  DRIVER = driver;
 
   const handleStartTask = (taskId) => {
     setTasks((prev) =>
       prev.map((t) => (t.id === taskId ? { ...t, status: "En cours" } : t))
     );
   };
+  const handleDriverStatus=async (DriverStatus,id)=>{
+    await updateDriverStatus(id,DriverStatus)
+    setDriverStatus(DriverStatus)
+  }
 
-  const handleCompleteTask = (taskId) => {
+  const handleCompleteTask = async (taskId) => {
+    const taskStatus="Terminé"
+    await changeTaskStatus(taskId,taskStatus);
     setTasks((prev) =>
       prev.map((t) => (t.id === taskId ? { ...t, status: "Terminé" } : t))
     );
@@ -166,7 +135,8 @@ export default function DriverDashboard() {
     setSelectedTask(null);
   };
 
-  const handleSend = (type) => {
+  const handleSend = async (type) => {
+    await sendProblemMessage(problemType,problemText)
     setSubmitted(type);
     setTimeout(() => {
       setModal(null);
@@ -179,16 +149,20 @@ export default function DriverDashboard() {
   };
 
   const completedCount = tasks.filter((t) => t.status === "Terminé").length;
-  const pendingCount   = tasks.filter((t) => t.status === "En attente").length;
+  // const pendingCount   = tasks.filter((t) => t.status === "En attente").length;
   const ongoingCount   = tasks.filter((t) => t.status === "En cours").length;
 
   const statusColor = {
-    Disponible:       "text-emerald-400",
+    "available":       "text-emerald-400",
     "En mission":     "text-sky-400",
     "En congé":       "text-amber-400",
     "Problème camion":"text-red-400",
   };
-
+    if (!driver) return (
+    <div className="flex items-center justify-center h-screen">
+      <p className="text-gray-400">Loading...</p>
+    </div>
+  );
   return (
     <div className="min-h-screen bg-gray-950 text-white">
 
@@ -207,14 +181,16 @@ export default function DriverDashboard() {
           <div className="flex items-center gap-3">
             
 
-            <div className="flex items-center gap-2 bg-gray-800/60 px-3 py-1.5 rounded-xl border border-gray-700/40">
+            {driver && (
+              <div className="flex items-center gap-2 bg-gray-800/60 px-3 py-1.5 rounded-xl border border-gray-700/40">
               <div className="w-6 h-6 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-xs font-bold">
-                {DRIVER.name.charAt(0)}
+                {driver.name.charAt(0)}
               </div>
               <span className="text-sm font-medium text-gray-200">
-                {DRIVER.name.split(" ")[0]}
+                {driver.name.split(" ")[0]}
               </span>
             </div>
+            )}
           </div>
         </div>
       </header>
@@ -233,7 +209,7 @@ export default function DriverDashboard() {
               <div>
                 <h1 className="text-xl font-bold text-white">{DRIVER.name}</h1>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-gray-400">{DRIVER.id}</span>
+                  <span className="text-xs text-gray-400">{DRIVER._id}</span>
                   <span className="text-gray-600">•</span>
                   <div className="flex items-center gap-1 text-amber-400">
                     <Star className="w-3.5 h-3.5 fill-amber-400" />
@@ -248,24 +224,22 @@ export default function DriverDashboard() {
               <Activity className="w-4 h-4 text-gray-400" />
               <select
                 value={driverStatus}
-                onChange={(e) => setDriverStatus(e.target.value)}
-                className={`bg-transparent text-sm font-semibold focus:outline-none cursor-pointer ${statusColor[driverStatus] ?? "text-white"}`}
+                onChange={(e) => handleDriverStatus(e.target.value,driver._id)}
+                className={`bg-gray-900/95 text-sm font-semibold focus:outline-none cursor-pointer ${statusColor[driverStatus] ?? "text-white"}`}
               >
-                <option value="Disponible">Disponible</option>
+                <option value="available">Disponible</option>
                 <option value="En mission">En mission</option>
                 <option value="En congé">En congé</option>
                 <option value="Problème camion">Problème camion</option>
               </select>
-              <ChevronDown className="w-3.5 h-3.5 text-gray-500" />
             </div>
           </div>
 
           {/* Quick stats */}
-          <div className="grid grid-cols-3 gap-3 mt-6">
+          <div className="grid grid-cols-2 gap-3 mt-6">
             {[
               { label: "Terminées",  value: completedCount, color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20" },
               { label: "En cours",   value: ongoingCount,   color: "text-sky-400",     bg: "bg-sky-500/10 border-sky-500/20" },
-              { label: "En attente", value: pendingCount,   color: "text-amber-400",   bg: "bg-amber-500/10 border-amber-500/20" },
             ].map((s) => (
               <div key={s.label} className={`rounded-xl border px-4 py-3 ${s.bg}`}>
                 <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
@@ -311,9 +285,10 @@ export default function DriverDashboard() {
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" /> Prochaine maintenance
                 </div>
-                <span className="text-gray-200">{TRUCK.nextMaintenance}</span>
+                <span className="text-gray-200">{new Date(TRUCK.nextMaintenance).toISOString().split('T')[0]}</span>
+                
               </div>
-              <div>
+              {/* <div>
                 <div className="flex items-center justify-between text-gray-400 mb-1.5">
                   <span>Carburant</span>
                   <span
@@ -329,7 +304,7 @@ export default function DriverDashboard() {
                   </span>
                 </div>
                 <FuelBar value={TRUCK.fuel} />
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -402,10 +377,9 @@ export default function DriverDashboard() {
 
           <div className="divide-y divide-gray-800/60">
             {tasks.map((task) => (
-              <div key={task.id} className="p-5 hover:bg-gray-800/20 transition-colors">
+              <div key={task._id} className="p-5 hover:bg-gray-800/20 transition-colors">
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-mono text-xs text-sky-400 font-semibold">{task.id}</span>
                     <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${statusStyles[task.status]}`}>
                       {task.status}
                     </span>
@@ -415,14 +389,14 @@ export default function DriverDashboard() {
                   </div>
                   <div className="flex items-center gap-1 text-xs text-gray-500 flex-shrink-0">
                     <Clock className="w-3.5 h-3.5" />
-                    {task.time}
+                    {new Date(task.createdAt).toISOString().split('T')[0]}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4 mb-4 text-sm">
                   <div className="flex items-center gap-2 text-gray-300">
                     <User className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                    <span className="font-medium">{task.clientName}</span>
+                    <span className="font-medium">{task.firstName} {task.lastName}</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-300">
                     <Phone className="w-4 h-4 text-gray-500 flex-shrink-0" />
@@ -434,24 +408,24 @@ export default function DriverDashboard() {
                   </div>
                   <div className="flex items-center gap-2 text-gray-400">
                     <MapPin className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                    {task.location}
-                  </div>
+                    {task.carLocation || (task.transportFrom + " To " + task.transportTo)}                  
+                    </div>
                   <div className="flex items-center gap-2 text-gray-400 sm:col-span-2">
                     <AlertTriangle className="w-4 h-4 text-amber-500/60 flex-shrink-0" />
-                    {task.problem}
+                    {task.problemDescription}
                   </div>
                 </div>
 
                 <div className="flex gap-2 flex-wrap">
-                  {task.status === "En attente" && (
+                  {/* {task.status === "En attente" && (
                     <button
-                      onClick={() => handleStartTask(task.id)}
+                      onClick={() => handleStartTask(task._id)}
                       className="flex items-center gap-1.5 px-4 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-sm font-medium transition-colors"
                     >
                       <Navigation className="w-4 h-4" />
                       Démarrer
                     </button>
-                  )}
+                  )} */}
                   {task.status === "En cours" && (
                     <button
                       onClick={() => { setSelectedTask(task); setModal("complete"); }}
@@ -649,20 +623,19 @@ export default function DriverDashboard() {
       {/* Task detail */}
       {modal === "detail" && selectedTask && (
         <Modal
-          title={`Détails — ${selectedTask.id}`}
+          title={`Task Details`}
           icon={<Package className="w-5 h-5 text-sky-400" />}
           onClose={() => { setModal(null); setSelectedTask(null); }}
         >
           <div className="space-y-1 text-sm">
             {[
-              { label: "Client",       value: selectedTask.clientName },
+              { label: "Client",       value: selectedTask.firstName +" "+ selectedTask.lastName },
               { label: "Téléphone",    value: selectedTask.phone },
               { label: "Service",      value: selectedTask.serviceType },
               { label: "Véhicule",     value: selectedTask.carType },
-              { label: "Localisation", value: selectedTask.location },
-              { label: "Problème",     value: selectedTask.problem },
-              { label: "Horaire",      value: selectedTask.time },
-              { label: "Priorité",     value: selectedTask.priority },
+              { label: "Localisation", value: selectedTask.carLocation ||(selectedTask.transportFrom +" To "+selectedTask.transportTo) },
+              { label: "Problème",     value: selectedTask.problemDescription },
+              { label: "Horaire",      value: new Date(selectedTask.createdAt).toISOString().split('T')[0] },
               { label: "Statut",       value: selectedTask.status },
             ].map((row) => (
               <div
@@ -706,7 +679,7 @@ export default function DriverDashboard() {
               Annuler
             </button>
             <button
-              onClick={() => handleCompleteTask(selectedTask.id)}
+              onClick={() => handleCompleteTask(selectedTask._id)}
               className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl transition-colors text-sm flex items-center gap-2"
             >
               <CheckCircle className="w-4 h-4" /> Confirmer

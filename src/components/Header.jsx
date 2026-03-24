@@ -77,7 +77,12 @@ const Header = () => {
             ))}
             {(location.pathname === '/AdminDashboard' || location.pathname === '/DriverDashboard' ) &&(
             <button
-              onClick={() => {navigate("/");localStorage.removeItem('token');localStorage.removeItem('DriverToken');} }
+              onClick={() => {
+                window.location.pathname === "/AdminDashboard"
+                ? localStorage.removeItem('adminToken')
+                : localStorage.removeItem('driverToken');
+                navigate("/");
+              }}
               className="ml-4 px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg font-semibold text-sm transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-red-500/20"
             >
               Log out

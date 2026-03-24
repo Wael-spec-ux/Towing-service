@@ -8,7 +8,8 @@ export async function AdminLogin(formData) {
   });
 
   const result = await response.json();
-  localStorage.setItem('token', result.token);
+  localStorage.setItem('adminToken', result.token);
+  localStorage.setItem('role','admin')
   if (!response.ok) {
     throw new Error(result.message || 'login failed');
   }
@@ -27,8 +28,10 @@ export async function DriverLogin(formData) {
   });
 
   const result = await response.json();
-  localStorage.setItem('DriverToken', result.DriverToken);
-
+  localStorage.setItem('driverToken', result.token);
+  localStorage.setItem("role",'driver')
+  localStorage.setItem('driverId', result.driverId);
+  console.log("DriverId from DriverLogin :",result.driverId)
   if (!response.ok) {
     throw new Error(result.message || 'login failed');
   }
