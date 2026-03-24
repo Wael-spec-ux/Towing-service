@@ -74,3 +74,16 @@ export const assignTruckToDriver = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+export const getTruckByPlate = async (req, res) => {
+  try {
+    const { plate } = req.params;
+    const truck = await Truck.findOne({ plate });
+    if (!truck) {
+      return res.status(404).json({ message: 'Truck not found' });
+    }
+    res.status(200).json(truck);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};

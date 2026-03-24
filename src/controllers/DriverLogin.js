@@ -9,14 +9,14 @@ export const DriverLogin = async (req, res) => {
       if (!driver || !isMatch) {
         return res.status(401).json({ message: 'Invalid credentials' });
       } else {
-        const DriverToken = jwt.sign(
+        const token = jwt.sign(
           { id: driver._id, role: 'driver' }, // payload
           process.env.JWT_SECRET,           // secret key
           { expiresIn: '24h' }              // expiry
         );
-        res.status(200).json({ message: 'Login successful', driver, DriverToken});
+        res.status(200).json({ message: 'Login successful', driver,token,driverId: driver._id });
       }
     } catch (error) {
-      res.status(500).json({ message: 'Error occurred while logging in'});
+      res.status(500).json({ message: 'Error occurred while logging in'},error.messag);
     }
     };

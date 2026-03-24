@@ -3,7 +3,7 @@ const driverSchema = new mongoose.Schema(
     {
         name: { type: String, required: true },
         phone : { type: String, required: true },
-        status:{ type: String, enum: ['available', 'En mission','Problème camion'], default: 'available' },
+        status:{ type: String, enum: ['available', 'En mission','Problème camion','En congé'], default: 'available' },
         currentLocation: { type: String ,default:"ben arouss" },
         email: { type: String, required: true, lowercase: true },
         password: { type: String, required: true },

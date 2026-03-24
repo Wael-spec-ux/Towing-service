@@ -97,3 +97,42 @@ export const updateAssignedDriverAndStatus = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+export const findTasksByAssignedDriverEqualsToDriverId = async (req, res) => {
+  try {
+    const { driverId } = req.params;
+    const tasks = await Reservation.find({ assignedDriver: driverId });
+
+    if (tasks.length === 0) {
+      return res.status(404).json({ message: 'No tasks found' });
+    }
+
+    res.status(200).json(tasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+export const changeTaskStatus = async (req, res) => {
+  try {
+    const { id, status } = req.body;
+
+    if (!id || !status) {
+      return res.status(400).json({ message: 'id and status are required' });
+    }
+
+    const reservation = await Reservation.findById(id);
+    if (!reservation) {
+      return res.status(404).json({ message: 'No Task found' });
+    }
+
+    reservation.status = status;
+    await reservation.save();
+
+    res.status(200).json({ message: 'Status changed', reservation });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
