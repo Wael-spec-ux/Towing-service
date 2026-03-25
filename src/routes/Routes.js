@@ -6,7 +6,7 @@ import { loginAdmin,createAdmin,updateAdminPassword} from '../controllers/AdminL
 import { DriverLogin } from '../controllers/DriverLogin.js';
 import { verifyToken } from '../middleware/authMiddleware.js';
 import { resetPassword, requestPasswordReset } from '../controllers/auth/resetPassword.js';
-import {sendProblemMessage} from '../controllers/Messages.js'
+import {sendProblemMessage,RequestRestDay} from '../controllers/Messages.js'
 const router = express.Router();
 // Reservation routes
 router.post('/createReservation', createReservation);
@@ -40,4 +40,5 @@ router.post("/reset-password/:token",resetPassword);
 router.post("/requestPasswordReset",requestPasswordReset);
 //notification routes
 router.post("/sendProblemMessage",sendProblemMessage)
+router.post('/RequestRestDay',RequestRestDay)
 export default router;
