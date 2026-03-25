@@ -200,6 +200,10 @@ const handleAssignDriver = async (reservationId, driverId) => {
       e.preventDefault();
       // const newTruckId = `TRK-${String(trucks.length + 1).padStart(3, "0")}`;
       const plate = newTruck.serialNumber.toUpperCase();
+      if (!newTruck.driver) {
+      alert('Veuillez sélectionner un chauffeur');
+      return;
+      }
       const truckToAdd = {
         plate: plate,
         type: newTruck.type,
@@ -446,6 +450,7 @@ const handleAssignDriver = async (reservationId, driverId) => {
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
+
                     {/* <button className="p-2 text-gray-400 hover:text-green-400 hover:bg-gray-700/50 rounded-lg">
                       <MessageSquare className="w-4 h-4" />
                     </button> */}
@@ -531,18 +536,6 @@ const handleAssignDriver = async (reservationId, driverId) => {
                   </div>
                 </div>
               ))}
-            </div>
-
-            <div className="bg-gradient-to-r from-blue-900/20 to-gray-900/20 rounded-xl border border-blue-700/50 p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-bold text-lg mb-1">Maintenance Préventive</h4>
-                  <p className="text-gray-400 text-sm">Prochaine maintenance programmée dans 15 jours</p>
-                </div>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                  Programmer
-                </button>
-              </div>
             </div>
           </div>
         )}

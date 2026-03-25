@@ -29,6 +29,8 @@ import { GetTruckByPlate } from "../api/TruckApi";
 import { FindTasksByAssignedDriverEqualsToDriverId ,changeTaskStatus} from "../api/reservationApi";
 import { useNavigate } from "react-router";
 import { useEffect } from "react";
+import { sendProblemMessage } from "../api/DriverQickActions";
+import { RequestRestDay } from "../api/DriverQickActions";
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const statusStyles = {
   // "En attente": "bg-amber-500/15 text-amber-400 border border-amber-500/30",
@@ -84,9 +86,8 @@ export default function DriverDashboard() {
   const [modal, setModal] = useState(null); // "problem" | "rest" | "message" | "detail" | "complete"
   const [selectedTask, setSelectedTask] = useState(null);
   const [problemText, setProblemText] = useState("");
-  const [messageText, setMessageText] = useState("");
   const [problemType, setProblemType] = useState("Camion");
-  const [restDate, setRestDate] = useState("");
+  const [restDay, setRestDay] = useState(""); 
   const [restReason, setRestReason] = useState("");
   const [submitted, setSubmitted] = useState(null);
   useEffect(() => {
@@ -115,11 +116,11 @@ export default function DriverDashboard() {
 
   const  DRIVER = driver;
 
-  const handleStartTask = (taskId) => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, status: "En cours" } : t))
-    );
-  };
+  // const handleStartTask = (taskId) => {
+  //   setTasks((prev) =>
+  //     prev.map((t) => (t.id === taskId ? { ...t, status: "En cours" } : t))
+  //   );
+  // };
   const handleDriverStatus=async (DriverStatus,id)=>{
     await updateDriverStatus(id,DriverStatus)
     setDriverStatus(DriverStatus)
@@ -136,13 +137,21 @@ export default function DriverDashboard() {
   };
 
   const handleSend = async (type) => {
-    await sendProblemMessage(problemType,problemText)
+    await sendProblemMessage(problemType,problemText,driver.email)
     setSubmitted(type);
     setTimeout(() => {
       setModal(null);
       setProblemText("");
-      setMessageText("");
-      setRestDate("");
+      setSubmitted(null);
+    }, 1800);
+  };
+    const handleSendRestDay = async (type) => {
+    await RequestRestDay(restDay,restReason,driver.email)
+    setSubmitted(type);
+    setTimeout(() => {
+      setModal(null);
+      setProblemText("");
+      setRestDay("");
       setRestReason("");
       setSubmitted(null);
     }, 1800);
@@ -334,15 +343,6 @@ export default function DriverDashboard() {
                   sub: "Congé, indisponibilité…",
                   titleColor: "text-amber-300",
                 },
-                {
-                  key: "message",
-                  icon: <MessageSquare className="w-5 h-5 text-sky-400" />,
-                  iconBg: "bg-sky-500/20 group-hover:bg-sky-500/30",
-                  cardBg: "bg-sky-500/10 border-sky-500/25 hover:bg-sky-500/20",
-                  title: "Contacter l'Admin",
-                  sub: "Message libre",
-                  titleColor: "text-sky-300",
-                },
               ].map((action) => (
                 <button
                   key={action.key}
@@ -532,9 +532,9 @@ export default function DriverDashboard() {
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Date souhaitée *</label>
                 <input
-                  type="date"
-                  value={restDate}
-                  onChange={(e) => setRestDate(e.target.value)}
+                  type="text"
+                  value={restDay}
+                  onChange={(e) => setRestDay(e.target.value)}
                   className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
                 />
               </div>
@@ -556,8 +556,8 @@ export default function DriverDashboard() {
                   Annuler
                 </button>
                 <button
-                  onClick={() => handleSend("rest")}
-                  disabled={!restDate}
+                  onClick={() => handleSendRestDay("rest")}
+                  disabled={!restDay.trim()}
                   className="px-4 py-2 bg-amber-600 hover:bg-amber-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl transition-colors text-sm flex items-center gap-2"
                 >
                   <Send className="w-4 h-4" /> Envoyer
@@ -567,59 +567,6 @@ export default function DriverDashboard() {
           )}
         </Modal>
       )}
-
-      {/* Contact Admin */}
-      {modal === "message" && (
-        <Modal
-          title="Contacter l'Admin"
-          icon={<MessageSquare className="w-5 h-5 text-sky-400" />}
-          onClose={() => setModal(null)}
-        >
-          {submitted === "message" ? (
-            <div className="flex flex-col items-center py-6 gap-3">
-              <CheckCircle className="w-12 h-12 text-emerald-400" />
-              <p className="text-emerald-300 font-medium">Message envoyé !</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Sujet</label>
-                <input
-                  type="text"
-                  placeholder="Objet du message…"
-                  className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Message *</label>
-                <textarea
-                  rows={4}
-                  value={messageText}
-                  onChange={(e) => setMessageText(e.target.value)}
-                  placeholder="Écrivez votre message ici…"
-                  className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm resize-none"
-                />
-              </div>
-              <div className="flex justify-end gap-3 pt-2">
-                <button
-                  onClick={() => setModal(null)}
-                  className="px-4 py-2 border border-gray-700 text-gray-300 rounded-xl hover:bg-gray-800 transition-colors text-sm"
-                >
-                  Annuler
-                </button>
-                <button
-                  onClick={() => handleSend("message")}
-                  disabled={!messageText.trim()}
-                  className="px-4 py-2 bg-sky-600 hover:bg-sky-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl transition-colors text-sm flex items-center gap-2"
-                >
-                  <Send className="w-4 h-4" /> Envoyer
-                </button>
-              </div>
-            </div>
-          )}
-        </Modal>
-      )}
-
       {/* Task detail */}
       {modal === "detail" && selectedTask && (
         <Modal
