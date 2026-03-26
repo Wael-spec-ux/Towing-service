@@ -74,6 +74,32 @@ export const assignTruckToDriver = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+export const AssignDriverToTruck = async (req, res) => {
+  try {
+    const { driverId, truckPlate } = req.body;
+
+    const truck = await Truck.findOne({ plate:truckPlate });
+    if (!truck) {
+      return res.status(404).json({ message: "Truck not found" });
+    }
+
+    const driver = await Driver.findById(driverId);
+    if (!driver) {
+      return res.status(404).json({ message: "Driver not found" });
+    }
+
+    truck.driver = driver.name;
+    await truck.save();
+
+    res.status(200).json({ message: "driver assigned to truck" });
+
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: "server error" });
+  }
+};
+
 export const getTruckByPlate = async (req, res) => {
   try {
     const { plate } = req.params;
