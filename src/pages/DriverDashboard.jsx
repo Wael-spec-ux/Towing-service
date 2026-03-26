@@ -295,7 +295,12 @@ export default function DriverDashboard() {
                   <Calendar className="w-4 h-4" /> Prochaine maintenance
                 </div>
                 <span className="text-gray-200">{new Date(TRUCK.nextMaintenance).toISOString().split('T')[0]}</span>
-                
+              </div>
+              <div className="flex items-center justify-between text-gray-400">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" /> Dernier maintenance
+                </div>
+                <span className="text-gray-200">{new Date(TRUCK.lastMaintenance).toISOString().split('T')[0]}</span>
               </div>
               {/* <div>
                 <div className="flex items-center justify-between text-gray-400 mb-1.5">

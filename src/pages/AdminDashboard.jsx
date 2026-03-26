@@ -35,6 +35,7 @@
   import { formatDate } from "../utils/FriendlyDate";
   import { DeleteConfirmModal } from "../components/DeleteConfirmModal";
 import { DeleteDriverModal } from "../components/DeleteDriverModel";
+import { AssignTruckModal } from "../components/AssignTruckModal";
   const AdminDashboard = () => {
     const [reservations, setReservations] = useState([]);
     useEffect(() => {
@@ -90,8 +91,10 @@ import { DeleteDriverModal } from "../components/DeleteDriverModel";
     const [showNewTruckModal, setShowNewTruckModal] = useState(false);
     const [showAssignModal, setShowAssignModal] = useState(false);
     const [selectedReservation, setSelectedReservation] = useState(null);
+    const [selectedDriver,setSelectedDriver]=useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [activeTab, setActiveTab] = useState("reservations");
+    const [showAssignTruckModal,setshowAssignTruckModal]=useState(false);
 
     const stats = {
       totalReservations: reservations.length,
@@ -200,10 +203,6 @@ const handleAssignDriver = async (reservationId, driverId) => {
       e.preventDefault();
       // const newTruckId = `TRK-${String(trucks.length + 1).padStart(3, "0")}`;
       const plate = newTruck.serialNumber.toUpperCase();
-      if (!newTruck.driver) {
-      alert('Veuillez sélectionner un chauffeur');
-      return;
-      }
       const truckToAdd = {
         plate: plate,
         type: newTruck.type,
@@ -213,7 +212,7 @@ const handleAssignDriver = async (reservationId, driverId) => {
         nextMaintenance: newTruck.nextMaintenance || "N/A",
         location: newTruck.location
       };
-      await AssignTruckToDriver(truckToAdd.plate, truckToAdd.driver);
+      {truckToAdd.driver && await AssignTruckToDriver(truckToAdd.plate, truckToAdd.driver);}
       await createTruck(truckToAdd);
       console.log("Added truck:", truckToAdd);
       const updated = await GetAllTrucks();
@@ -450,6 +449,13 @@ const handleAssignDriver = async (reservationId, driverId) => {
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
+                    {!driver.assignedTruck && <button
+                    onClick={() => { setshowAssignTruckModal(true); setSelectedDriver(driver); }}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-sm font-medium hover:bg-blue-500/20 hover:border-blue-500/50 hover:text-blue-300 transition-all"
+                    >
+                    <Edit className="w-3.5 h-3.5" />
+                    Assignée
+                    </button>}                    
 
                     {/* <button className="p-2 text-gray-400 hover:text-green-400 hover:bg-gray-700/50 rounded-lg">
                       <MessageSquare className="w-4 h-4" />
@@ -546,6 +552,11 @@ const handleAssignDriver = async (reservationId, driverId) => {
           setNewDriver={setNewDriver}
           handleAddDriver={handleAddDriver}
           setShowNewDriverModal={setShowNewDriverModal}
+        />}
+          {showAssignTruckModal && <AssignTruckModal 
+          selectedDriver={selectedDriver}
+          setshowAssignTruckModal={setshowAssignTruckModal}
+          setDrivers={setDrivers}
         />}
         {showAssignModal && selectedReservation && <AssignDriverModal 
           selectedReservation={selectedReservation}
