@@ -36,6 +36,7 @@
   import { DeleteConfirmModal } from "../components/DeleteConfirmModal";
 import { DeleteDriverModal } from "../components/DeleteDriverModel";
 import { AssignTruckModal } from "../components/AssignTruckModal";
+import { EditTruckModal } from "../components/EditMaintenance";
   const AdminDashboard = () => {
     const [reservations, setReservations] = useState([]);
     useEffect(() => {
@@ -95,7 +96,8 @@ import { AssignTruckModal } from "../components/AssignTruckModal";
     const [searchTerm, setSearchTerm] = useState("");
     const [activeTab, setActiveTab] = useState("reservations");
     const [showAssignTruckModal,setshowAssignTruckModal]=useState(false);
-
+    const [truckPlate,setTruckPlate]=useState("");
+    const [showEditTruckModal,setshowEditTruckModal]=useState(false)
     const stats = {
       totalReservations: reservations.length,
       pendingReservations: reservations.filter(r => r.status === "En attente").length,
@@ -150,6 +152,8 @@ const handleAssignDriver = async (reservationId, driverId) => {
         const updated = await GetAllDrivers();
         setDrivers(updated);
         setDeleteDriverModal({ driverId: null, open: false });
+        const update=await GetAllTrucks();
+        setTrucks(update)
       } catch (err) {
         console.error("Failed to delete driver:", err);
       }
@@ -539,6 +543,12 @@ const handleAssignDriver = async (reservationId, driverId) => {
                       <Trash2 className="w-4 h-4 mr-1" />
                       Supprimer
                     </button> 
+                    <button
+                      onClick={() => {setshowEditTruckModal(true);setTruckPlate(truck.plate);}}
+                      className="flex items-center gap-2 px-4 py-2 border border-blue-500 text-blue-400 hover:bg-blue-950 hover:text-blue-300 text-sm font-medium rounded-lg transition-colors"
+                    >
+                      <Edit className="w-4 h-4 mr-1" />
+                    </button> 
                   </div>
                 </div>
               ))}
@@ -557,6 +567,7 @@ const handleAssignDriver = async (reservationId, driverId) => {
           selectedDriver={selectedDriver}
           setshowAssignTruckModal={setshowAssignTruckModal}
           setDrivers={setDrivers}
+          setAllTrucks={setTrucks}
         />}
         {showAssignModal && selectedReservation && <AssignDriverModal 
           selectedReservation={selectedReservation}
@@ -585,6 +596,13 @@ const handleAssignDriver = async (reservationId, driverId) => {
             driverName={deleteDriverModal.driverName}
             onConfirm={confirmDeleteDriver}
             onCancel={() => setDeleteDriverModal({ driverId: null, open: false })}
+          />
+        }
+        {
+          showEditTruckModal && <EditTruckModal
+          truckPlate={truckPlate}
+          setshowEditTruckModal={setshowEditTruckModal}
+          setTrucks={setTrucks}
           />
         }
       </div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { AssignDriverToTruck, GetAllTrucks } from "../api/TruckApi";
 import { AssignTruck } from "../api/DriverApi";
 
-export function AssignTruckModal({ selectedDriver,setDrivers,setshowAssignTruckModal }) {
+export function AssignTruckModal({ selectedDriver,setDrivers,setshowAssignTruckModal,setAllTrucks }) {
     const [Truck, setTrucks] = useState([]);
     useEffect(() => {
       const fetchTrucks = async () => {
@@ -24,6 +24,8 @@ const handleAssignTruck=async(driverId,truckPlate)=>{
             ? { ...res, assignedTruck: truckPlate}
             : res
     ));
+      const updateTruks=await GetAllTrucks();
+        setAllTrucks(updateTruks)
         }catch(error){
             console.log(error.message);
         }
