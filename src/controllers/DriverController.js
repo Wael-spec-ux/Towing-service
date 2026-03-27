@@ -1,5 +1,6 @@
 import Driver from '../models/DriverModel.js';
 import bcrypt from 'bcryptjs';
+import Truck from '../models/truckModel.js'
 export const createDriver = async (req, res) => {
   try {
     const { name, phone, email, licenceNumber,password,truckId} = req.body;
@@ -54,10 +55,13 @@ export const deleteDriver = async (req, res) => {
   try {
     const { id } = req.body;
     const driver = await Driver.findById(id);
+    const truck= await Truck.findOne({driver:driver.name})
     if (!driver) {
       return res.status(404).json({ message: 'Driver not found' });
     }
     await Driver.findByIdAndDelete(id);
+    truck.driver="";
+    await truck.save()
     res.status(200).json({ message: 'Driver deleted successfully' });
   } catch (error) {
     console.error(error.message);

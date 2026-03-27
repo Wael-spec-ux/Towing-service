@@ -113,3 +113,31 @@ export const getTruckByPlate = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+export const updateTruckMaintenance = async (req, res) => {
+  try {
+    const {lastMaintenance} = req.body.lastMaintenance;
+    const {nextMaintenance} = req.body.nextMaintenance;
+    const {location} = req.body.location;
+    const id = req.body.id;
+
+    if (!id || !{lastMaintenance} || !{nextMaintenance} || !{location}) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    const truck = await Truck.findById(id); 
+    if (!truck) {
+      return res.status(404).json({ message: 'Truck not found' });
+    }
+
+    truck.lastMaintenance = lastMaintenance;
+    truck.nextMaintenance = nextMaintenance;
+    truck.location = location;
+    await truck.save();
+
+    res.status(200).json({ message: 'Maintenance and location updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
