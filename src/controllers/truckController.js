@@ -116,12 +116,13 @@ export const getTruckByPlate = async (req, res) => {
 
 export const updateTruckMaintenance = async (req, res) => {
   try {
-    const {lastMaintenance} = req.body.lastMaintenance;
-    const {nextMaintenance} = req.body.nextMaintenance;
-    const {location} = req.body.location;
-    const id = req.body.id;
-
-    if (!id || !{lastMaintenance} || !{nextMaintenance} || !{location}) {
+    const {lastMaintenance,nextMaintenance,location,NewPlate,id,NewName,DriverName} = req.body;
+    const driver=await Driver.findOne({name:DriverName})
+    if (!driver) {
+  return res.status(404).json({ message: 'Driver not found' });
+  }
+    if (!id || !{lastMaintenance} || !{nextMaintenance} || !{location} || !{NewPlate} || !{NewName} || !{DriverName}) {
+      console.log(lastMaintenance,nextMaintenance,location,NewPlate,id,DriverName)
       return res.status(400).json({ message: 'All fields are required' });
     }
 
@@ -133,7 +134,11 @@ export const updateTruckMaintenance = async (req, res) => {
     truck.lastMaintenance = lastMaintenance;
     truck.nextMaintenance = nextMaintenance;
     truck.location = location;
+    truck.plate = NewPlate;
+    truck.type = NewName;
     await truck.save();
+    driver.assignedTruck=NewPlate;
+    await driver.save();
 
     res.status(200).json({ message: 'Maintenance and location updated successfully' });
   } catch (err) {
