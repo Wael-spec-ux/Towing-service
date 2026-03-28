@@ -23,6 +23,7 @@ import {
   Info,
   ChevronDown,
   Plus,
+  Edit
 } from "lucide-react";
 import { GetDriverById ,updateDriverStatus} from "../api/DriverApi";
 import { GetTruckByPlate } from "../api/TruckApi";
@@ -31,6 +32,7 @@ import { useNavigate } from "react-router";
 import { useEffect } from "react";
 import { sendProblemMessage } from "../api/DriverQickActions";
 import { RequestRestDay } from "../api/DriverQickActions";
+import { EditTruckModal } from "../components/EditMaintenance";
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const statusStyles = {
   // "En attente": "bg-amber-500/15 text-amber-400 border border-amber-500/30",
@@ -90,6 +92,8 @@ export default function DriverDashboard() {
   const [restDay, setRestDay] = useState(""); 
   const [restReason, setRestReason] = useState("");
   const [submitted, setSubmitted] = useState(null);
+  const [showEditTruckModal,setshowEditTruckModal]=useState(false)
+  const [truckPlate,setTruckPlate]=useState(null)
   useEffect(() => {
     const fetchDriver = async () => {
       const driverId = localStorage.getItem('driverId');
@@ -128,7 +132,10 @@ export default function DriverDashboard() {
 
   const handleCompleteTask = async (taskId) => {
     const taskStatus="Terminé"
+    const driverStatus="available"
     await changeTaskStatus(taskId,taskStatus);
+    await updateDriverStatus(driver._id,driverStatus)
+    setDriverStatus(driverStatus)
     setTasks((prev) =>
       prev.map((t) => (t.id === taskId ? { ...t, status: "Terminé" } : t))
     );
@@ -218,7 +225,7 @@ export default function DriverDashboard() {
               <div>
                 <h1 className="text-xl font-bold text-white">{DRIVER.name}</h1>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-gray-400">{DRIVER._id}</span>
+                  <span className="text-xs text-gray-400">{DRIVER.email}</span>
                   <span className="text-gray-600">•</span>
                   <div className="flex items-center gap-1 text-amber-400">
                     <Star className="w-3.5 h-3.5 fill-amber-400" />
@@ -302,6 +309,12 @@ export default function DriverDashboard() {
                 </div>
                 <span className="text-gray-200">{new Date(TRUCK.lastMaintenance).toISOString().split('T')[0]}</span>
               </div>
+              <button
+                      onClick={() => {setshowEditTruckModal(true);setTruckPlate(TRUCK.plate);}}
+                      className="flex items-center gap-2 px-4 py-2 border border-blue-500 text-blue-400 hover:bg-blue-950 hover:text-blue-300 text-sm font-medium rounded-lg transition-colors ml-auto"
+                    >
+                      <Edit className="w-4 h-4 mr-1" />
+                    </button>
               {/* <div>
                 <div className="flex items-center justify-between text-gray-400 mb-1.5">
                   <span>Carburant</span>
@@ -639,6 +652,14 @@ export default function DriverDashboard() {
           </div>
         </Modal>
       )}
+        {
+          showEditTruckModal && <EditTruckModal
+          truckPlate={truckPlate}
+          setshowEditTruckModal={setshowEditTruckModal}
+          setTrucks={null}
+          setUpdateTruck={setTruck}
+          />
+        }
     </div>
   );
 }

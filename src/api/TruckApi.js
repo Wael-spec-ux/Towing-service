@@ -75,14 +75,14 @@ export const AssignDriverToTruck = async (driverId, truckPlate) => {
   const data = await response.json();
   return data;
 }
-export const updateTruckMaintenance = async (lastMaintenance,nextMaintenance,location,id) => {
+export const updateTruckMaintenance = async (lastMaintenance,nextMaintenance,location,id,NewPlate,NewName,DriverName) => {
   const response = await fetch('http://localhost:3000/updateTruckMaintenance', {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${localStorage.getItem('adminToken') || localStorage.getItem('driverToken')}`
     },
-    body: JSON.stringify({ lastMaintenance,nextMaintenance,location,id})
+    body: JSON.stringify({ lastMaintenance,nextMaintenance,location,id,NewPlate,NewName,DriverName})
   });
 
   if (!response.ok) {

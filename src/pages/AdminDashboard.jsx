@@ -603,6 +603,7 @@ const handleAssignDriver = async (reservationId, driverId) => {
           truckPlate={truckPlate}
           setshowEditTruckModal={setshowEditTruckModal}
           setTrucks={setTrucks}
+          setUpdateTruck={null}
           />
         }
       </div>
