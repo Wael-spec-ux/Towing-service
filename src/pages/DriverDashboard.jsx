@@ -130,15 +130,15 @@ export default function DriverDashboard() {
     setDriverStatus(DriverStatus)
   }
 
-  const handleCompleteTask = async (taskId) => {
+  const handleCompleteTask = async (taskId,driverId) => {
     const taskStatus="Terminé"
     const driverStatus="available"
     await changeTaskStatus(taskId,taskStatus);
     await updateDriverStatus(driver._id,driverStatus)
+    const data = await GetDriverById(driverId);
+    const Tasks = await FindTasksByAssignedDriverEqualsToDriverId(data._id);
     setDriverStatus(driverStatus)
-    setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, status: "Terminé" } : t))
-    );
+    setTasks(Tasks);
     setModal(null);
     setSelectedTask(null);
   };
@@ -631,8 +631,8 @@ export default function DriverDashboard() {
           onClose={() => { setModal(null); setSelectedTask(null); }}
         >
           <p className="text-gray-300 text-sm mb-6">
-            Confirmez-vous que la mission{" "}
-            <span className="text-white font-semibold">{selectedTask.id}</span> pour le client{" "}
+            Confirmez-vous que la mission De
+            <span className="text-white font-semibold">{selectedTask.id}</span> pour le client(e){" "+selectedTask.firstName+" "+selectedTask.lastName}
             <span className="text-white font-semibold">{selectedTask.clientName}</span> est bien
             terminée ?
           </p>
@@ -644,7 +644,7 @@ export default function DriverDashboard() {
               Annuler
             </button>
             <button
-              onClick={() => handleCompleteTask(selectedTask._id)}
+              onClick={() => handleCompleteTask(selectedTask._id,driver._id)}
               className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl transition-colors text-sm flex items-center gap-2"
             >
               <CheckCircle className="w-4 h-4" /> Confirmer

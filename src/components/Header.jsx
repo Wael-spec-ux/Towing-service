@@ -26,7 +26,7 @@ const Header = () => {
               </div>
               <div className="flex items-center text-gray-300">
                 <MapPin className="w-4 h-4 mr-2" />
-                <span>Serving Nationwide</span>
+                <span>Service national</span>
               </div>
             </div>
           </div>

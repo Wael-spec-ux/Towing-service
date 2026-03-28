@@ -40,21 +40,21 @@ const ReservationForm = () => {
 
   // Service types
   const serviceTypes = [
-    { id: "panne", label: "Car Breakdown", icon: <AlertTriangle className="w-5 h-5" /> },
-    { id: "transport", label: "Car Transport", icon: <Truck className="w-5 h-5" /> }
+    { id: "panne", label: "Panne de voiture", icon: <AlertTriangle className="w-5 h-5" /> },
+    { id: "transport", label: "Transport de voitures", icon: <Truck className="w-5 h-5" /> }
   ];
 
   // Problem types for breakdown service
   const problemTypes = [
-    "Engine Failure",
-    "Flat Tire",
-    "Battery Dead",
+    "Panne moteur",
+    "Pneu crevé",
+    "Batterie déchargée",
     "Accident",
-    "Out of Fuel",
-    "Locked Out",
-    "Mechanical Issue",
-    "Electrical Problem",
-    "Other"
+    "Panne de carburant",
+    "Enfermé dehors",
+    "Problème mécanique",
+    "Problème électrique",
+    "Autre"
   ];
 
   // Handle input changes
@@ -186,16 +186,16 @@ const ReservationForm = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                Emergency Assistance Request
+                Demande d'assistance d'urgence
               </h1>
               <p className="text-gray-400">
-                Fill in the details below and we'll dispatch help immediately
+                Remplissez les champs ci-dessous et nous dépêcherons de l'aide immédiatement.
               </p>
             </div>
             <div className="hidden md:block px-4 py-2 bg-blue-900/30 rounded-full">
               <div className="flex items-center text-blue-400">
                 <AlertTriangle className="w-5 h-5 mr-2" />
-                <span className="font-semibold">24/7 Response</span>
+                <span className="font-semibold">24/7 Réponse</span>
               </div>
             </div>
           </div>
@@ -211,14 +211,14 @@ const ReservationForm = () => {
               <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 p-6">
                 <h2 className="text-xl font-bold text-white mb-6 flex items-center">
                   <div className="w-2 h-6 bg-blue-500 rounded-full mr-3"></div>
-                  Personal Information
+                  Informations personnelles
                 </h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* First Name */}
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                      First Name *
+                      Nom *
                     </label>
                     <input
                       type="text"
@@ -236,7 +236,7 @@ const ReservationForm = () => {
                   {/* Last Name */}
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Last Name *
+                      Prenom *
                     </label>
                     <input
                       type="text"
@@ -254,11 +254,11 @@ const ReservationForm = () => {
                   {/* Phone */}
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Phone Number *
+                      Numéro de téléphone *
                     </label>
                     <div className="relative">
                       <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                        +1
+                        +216
                       </div>
                       <input
                         type="tel"
@@ -266,7 +266,7 @@ const ReservationForm = () => {
                         value={formData.phone}
                         onChange={handleChange}
                         className={`w-full pl-12 pr-4 py-3 bg-gray-900 border ${errors.phone ? "border-red-500" : "border-gray-700"} rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
-                        placeholder="(555) 123-4567"
+                        placeholder=" 56 015 812"
                       />
                     </div>
                     {errors.phone && (
@@ -277,7 +277,7 @@ const ReservationForm = () => {
                   {/* Email */}
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Email Address *
+                      Adresse email *
                     </label>
                     <input
                       type="email"
@@ -298,14 +298,14 @@ const ReservationForm = () => {
               <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 p-6">
                 <h2 className="text-xl font-bold text-white mb-6 flex items-center">
                   <div className="w-2 h-6 bg-blue-500 rounded-full mr-3"></div>
-                  Vehicle Information
+                  Informations sur le véhicule
                 </h2>
                 
                 <div className="space-y-6">
                   {/* Car Type */}
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Car Type *
+                      Type de Voiture *
                     </label>
                     <input
                       type="text"
@@ -326,7 +326,7 @@ const ReservationForm = () => {
               <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 p-6">
                 <h2 className="text-xl font-bold text-white mb-6 flex items-center">
                   <div className="w-2 h-6 bg-blue-500 rounded-full mr-3"></div>
-                  Type of Service Needed
+                  Type de service requis
                 </h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -347,7 +347,7 @@ const ReservationForm = () => {
                         <div className="text-left">
                           <div className="font-semibold">{service.label}</div>
                           <div className="text-sm opacity-75">
-                            {service.id === "panne" ? "Breakdown assistance" : "Vehicle transport"}
+                            {service.id === "panne" ? "Assistance dépannage" : "Transport de véhicules"}
                           </div>
                         </div>
                       </div>
@@ -360,7 +360,7 @@ const ReservationForm = () => {
                   <div className="space-y-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Problem Type *
+                        Type de problème *
                       </label>
                       <select
                         name="problemDescription"
@@ -368,7 +368,7 @@ const ReservationForm = () => {
                         onChange={handleChange}
                         className={`w-full px-4 py-3 bg-gray-900 border ${errors.problemDescription ? "border-red-500" : "border-gray-700"} rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                       >
-                        <option value="">Select the problem</option>
+                        <option value="">Sélectionnez le problème</option>
                         {problemTypes.map((problem) => (
                           <option key={problem} value={problem}>{problem}</option>
                         ))}
@@ -380,7 +380,7 @@ const ReservationForm = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Current Car Location *
+                        Emplacement actuel du véhicule *
                       </label>
                       <div className="relative">
                         <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -390,7 +390,7 @@ const ReservationForm = () => {
                           value={formData.carLocation}
                           onChange={handleChange}
                           className={`w-full pl-12 pr-4 py-3 bg-gray-900 border ${errors.carLocation ? "border-red-500" : "border-gray-700"} rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
-                          placeholder="Enter exact location or address"
+                          placeholder="Veuillez saisir l'emplacement exact ou l'adresse"
                         />
                       </div>
                       {errors.carLocation && (
@@ -403,7 +403,7 @@ const ReservationForm = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">
-                          Pickup Location *
+                          Lieu de ramassage *
                         </label>
                         <div className="relative">
                           <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -413,7 +413,7 @@ const ReservationForm = () => {
                             value={formData.transportFrom}
                             onChange={handleChange}
                             className={`w-full pl-12 pr-4 py-3 bg-gray-900 border ${errors.transportFrom ? "border-red-500" : "border-gray-700"} rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
-                            placeholder="Starting point address"
+                            placeholder="Adresse du point de départ"
                           />
                         </div>
                         {errors.transportFrom && (
@@ -433,7 +433,7 @@ const ReservationForm = () => {
                             value={formData.transportTo}
                             onChange={handleChange}
                             className={`w-full pl-12 pr-4 py-3 bg-gray-900 border ${errors.transportTo ? "border-red-500" : "border-gray-700"} rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
-                            placeholder="Delivery address"
+                            placeholder="Adresse de livraison"
                           />
                         </div>
                         {errors.transportTo && (
@@ -444,7 +444,7 @@ const ReservationForm = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Preferred Delivery Time *
+                        Preferer temps de livraison *
                       </label>
                       <div className="relative">
                         <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -468,7 +468,7 @@ const ReservationForm = () => {
               <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 p-6">
                 <h2 className="text-xl font-bold text-white mb-4 flex items-center">
                   <div className="w-2 h-6 bg-blue-500 rounded-full mr-3"></div>
-                  Additional Instructions (Optional)
+                  Instructions supplémentaires (optionnel)
                 </h2>
                 <textarea
                   name="specialInstructions"
@@ -476,7 +476,7 @@ const ReservationForm = () => {
                   onChange={handleChange}
                   rows="4"
                   className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="Any special requirements, access codes, vehicle conditions, or additional information..."
+                  placeholder="Exigences particulières, codes d'accès, conditions du véhicule ou informations supplémentaires..."
                 />
               </div>
 
@@ -516,26 +516,26 @@ const ReservationForm = () => {
           <div className="space-y-6">
             {/* Summary Card */}
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl border border-gray-700 p-6">
-              <h3 className="text-lg font-bold text-white mb-4">Request Summary</h3>
+              <h3 className="text-lg font-bold text-white mb-4">Résumé de la demande</h3>
               
               <div className="space-y-4">
                 <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                  <span className="text-gray-400">Service Type:</span>
+                  <span className="text-gray-400">Type de Service:</span>
                   <span className="text-blue-400 font-semibold">
-                    {formData.serviceType === "panne" ? "Breakdown Assistance" : "Car Transport"}
+                    {formData.serviceType === "panne" ? "Assistance dépannage" : "Transport de voitures"}
                   </span>
                 </div>
                 
                 {formData.carType && (
                   <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                    <span className="text-gray-400">Vehicle:</span>
+                    <span className="text-gray-400">Véhicule:</span>
                     <span className="text-white font-medium">{formData.carType}</span>
                   </div>
                 )}
                 
                 {formData.serviceType === "panne" && formData.problemDescription && (
                   <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                    <span className="text-gray-400">Problem:</span>
+                    <span className="text-gray-400">Problème:</span>
                     <span className="text-white font-medium">{formData.problemDescription}</span>
                   </div>
                 )}
@@ -550,7 +550,7 @@ const ReservationForm = () => {
                 )}
                 
                 <div className="pt-2">
-                  <div className="text-sm text-gray-400 mb-2">Estimated Response:</div>
+                  <div className="text-sm text-gray-400 mb-2">Réponse estimée :</div>
                   <div className="text-green-400 font-bold">15-30 minutes</div>
                 </div>
               </div>
@@ -560,43 +560,43 @@ const ReservationForm = () => {
             <div className="bg-gradient-to-br from-blue-900/20 to-gray-900/20 rounded-2xl border border-blue-700/50 p-6">
               <h3 className="text-lg font-bold text-white mb-4 flex items-center">
                 <AlertTriangle className="w-5 h-5 mr-2 text-yellow-400" />
-                Emergency Instructions
+                Instructions d'urgence
               </h3>
               
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-blue-400 rounded-full mt-1.5 mr-3"></div>
-                  <span className="text-gray-300">Stay with your vehicle if safe</span>
+                  <span className="text-gray-300">Restez près de votre véhicule </span>
                 </li>
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-blue-400 rounded-full mt-1.5 mr-3"></div>
-                  <span className="text-gray-300">Turn on hazard lights</span>
+                  <span className="text-gray-300">Allumez les feux de détresse</span>
                 </li>
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-blue-400 rounded-full mt-1.5 mr-3"></div>
-                  <span className="text-gray-300">Keep documents ready</span>
+                  <span className="text-gray-300">Préparez les documents</span>
                 </li>
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-blue-400 rounded-full mt-1.5 mr-3"></div>
-                  <span className="text-gray-300">We'll call to confirm details</span>
+                  <span className="text-gray-300">Nous vous appellerons pour confirmer les détails.</span>
                 </li>
               </ul>
               
               <div className="mt-6 p-3 bg-blue-900/30 rounded-lg">
-                <div className="text-blue-300 font-semibold mb-1">Emergency Hotline</div>
+                <div className="text-blue-300 font-semibold mb-1">Ligne d'assistance d'urgence</div>
                 <div className="text-2xl font-bold text-white">+216 97 354 009</div>
               </div>
             </div>
 
             {/* Quick Tips */}
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 p-6">
-              <h3 className="text-lg font-bold text-white mb-4">Quick Tips</h3>
+              <h3 className="text-lg font-bold text-white mb-4">Conseils rapides</h3>
               <p className="text-sm text-gray-400 leading-relaxed">
-                • Provide accurate location for faster service<br/>
-                • Include landmarks if address is unclear<br/>
-                • Have vehicle registration ready<br/>
-                • Remove valuables from the vehicle<br/>
-                • Our team will wear SOSCars identification
+                • Fournissez une localisation précise pour un service plus rapide<br/>
+                • Indiquez les points de repère si l'adresse est imprécise.<br/>
+                • Préparez l'immatriculation du véhicule<br/>
+                • Retirez les objets de valeur du véhicule<br/>
+                • Notre équipe portera des badges SOSCars.
               </p>
             </div>
           </div>

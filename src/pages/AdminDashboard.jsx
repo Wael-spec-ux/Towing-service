@@ -31,7 +31,7 @@
   import { AssignDriverModal } from "../components/AssignDriverModal";
   import { NewDriverModal } from "../components/NewDriverModal";
   import { NewTruckModal } from "../components/NewTruckModal";
-  import { createTruck, GetAllTrucks,AssignTruckToDriver,DeleteTruck } from "../api/TruckApi";
+  import { createTruck, GetAllTrucks,AssignTruckToDriver,DeleteTruck, updateTruckStatus } from "../api/TruckApi";
   import { formatDate } from "../utils/FriendlyDate";
   import { DeleteConfirmModal } from "../components/DeleteConfirmModal";
 import { DeleteDriverModal } from "../components/DeleteDriverModel";
@@ -180,7 +180,8 @@ const handleAssignDriver = async (reservationId, driverId) => {
      setDeleteModal({ open: false, truckId: null, driverName: "" })
    }
 
-    const handleMarkTruckRepaired = (truckId) => {
+    const handleMarkTruckRepaired = async (truckId) => {
+      await updateTruckStatus(truckId,"Opérationnel");
       setTrucks(prev => prev.map(truck =>
         truck._id === truckId ? { ...truck, status: "Opérationnel" } : truck
       ));
@@ -366,16 +367,12 @@ const handleAssignDriver = async (reservationId, driverId) => {
                         </span>
                       </td>
                       <td className="p-4">
-                        {reservation.assignedDriver ? (
                           <div className="flex items-center">
                             <Users className="w-4 h-4 mr-2 text-green-400" />
                             <span className="text-sm">
                               {drivers.find(d => d._id === reservation.assignedDriver)?.name || "N/A"}
                             </span>
                           </div>
-                        ) : (
-                          <span className="text-gray-400">Non assigné</span>
-                        )}
                       </td>
                       <td className="p-4">
                         <div className="flex space-x-2">
@@ -387,9 +384,9 @@ const handleAssignDriver = async (reservationId, driverId) => {
                               Assigner
                             </button>
                           )}
-                          <button className="p-1 text-gray-400 hover:text-white">
+                          {!(reservation.status === "En attente") && <button className="p-1 text-gray-400 hover:text-white">
                             <CheckCircle className="w-5 h-5" />
-                          </button>
+                          </button>}
                         </div>
                       </td>
                     </tr>

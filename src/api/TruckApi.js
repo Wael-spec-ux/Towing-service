@@ -75,14 +75,14 @@ export const AssignDriverToTruck = async (driverId, truckPlate) => {
   const data = await response.json();
   return data;
 }
-export const updateTruckMaintenance = async (lastMaintenance,nextMaintenance,location,id,NewPlate,NewName,DriverName) => {
+export const updateTruckMaintenance = async (lastMaintenance,nextMaintenance,location,id,NewPlate,NewName,DriverName,NewStatus) => {
   const response = await fetch('http://localhost:3000/updateTruckMaintenance', {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${localStorage.getItem('adminToken') || localStorage.getItem('driverToken')}`
     },
-    body: JSON.stringify({ lastMaintenance,nextMaintenance,location,id,NewPlate,NewName,DriverName})
+    body: JSON.stringify({ lastMaintenance,nextMaintenance,location,id,NewPlate,NewName,DriverName,NewStatus })
   });
 
   if (!response.ok) {
@@ -91,4 +91,17 @@ export const updateTruckMaintenance = async (lastMaintenance,nextMaintenance,loc
 
   const data = await response.json();
   return data;
+}
+export const updateTruckStatus=async(id,status)=>{
+  const response=await fetch('http://localhost:3000/updateTruckStatus',{
+    method:"PUT",
+    headers:{
+      "Content-Type":"application/json",
+      "Authorization": `Bearer ${localStorage.getItem('adminToken') || localStorage.getItem('driverToken')}`
+    },
+    body:JSON.stringify({id,status})
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
 }

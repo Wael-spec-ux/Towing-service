@@ -17,22 +17,18 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const services = [
-    "Emergency Towing",
-    "Long Distance Transport",
-    "Roadside Assistance",
-    "Vehicle Recovery",
-    "Motorcycle Towing",
-    "Accident Recovery"
+    "Dépannage d'urgence",
+    "Transport longue distance",
+    "Remorquage de motos",
+    "Récupération après accident"
   ];
 
   const quickLinks = [
-    "Home",
-    "Services",
-    "Pricing",
-    "Tracking",
-    "About Us",
-    "Contact"
-  ];
+  { label: "Home", path: "/" },
+  { label: "Services", path: "/services" },
+  { label: "About", path: "/about" },
+  { label: "Contact", path: "/contact" },
+];
 
   return (
     <footer className="bg-gradient-to-t from-gray-900 to-black text-white border-t border-gray-800">
@@ -51,8 +47,8 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-gray-400 leading-relaxed">
-              Your trusted partner for emergency vehicle assistance nationwide. 
-              Fast, safe, and reliable towing services 24/7.
+              Votre partenaire de confiance pour l'assistance routière d'urgence partout au pays.
+              Services de remorquage rapides, sûrs et fiables 24/7.
             </p>
             <div className="flex space-x-4">
               {[Facebook, Twitter, Instagram, Linkedin].map((Icon, index) => (
@@ -75,17 +71,17 @@ const Footer = () => {
             </h3>
             <ul className="space-y-3">
               {quickLinks.map((link) => (
-                <li key={link}>
-                  <Link
-                    to={`/${link.toLowerCase().replace(" ", "-")}`}
-                    className="text-gray-400 hover:text-blue-400 transition-colors flex items-center group"
-                  >
-                    <span className="w-0 group-hover:w-2 h-0.5 bg-blue-500 mr-2 transition-all duration-300"></span>
-                    {link}
-                  </Link>
-                </li>
+              <li key={link.label}>
+              <Link
+              to={link.path}
+              className="text-gray-400 hover:text-blue-400 transition-colors flex items-center group"
+                >
+              <span className="w-0 group-hover:w-2 h-0.5 bg-blue-500 mr-2 transition-all duration-300"></span>
+              {link.label}
+            </Link>
+            </li>
               ))}
-            </ul>
+</ul>
           </div>
 
           {/* Services */}
@@ -116,9 +112,9 @@ const Footer = () => {
               <div className="flex items-start space-x-3">
                 <Phone className="w-5 h-5 text-blue-400 mt-1" />
                 <div>
-                  <p className="font-semibold">Emergency Line</p>
-                  <p className="text-gray-400">1-800-SOS-CARS</p>
-                  <p className="text-sm text-gray-500">24/7 Available</p>
+                  <p className="font-semibold">Ligne d'urgence</p>
+                  <p className="text-gray-400">+216 97 354 009</p>
+                  <p className="text-sm text-gray-500">24/7 Disponible</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
@@ -131,9 +127,9 @@ const Footer = () => {
               <div className="flex items-start space-x-3">
                 <MapPin className="w-5 h-5 text-blue-400 mt-1" />
                 <div>
-                  <p className="font-semibold">Headquarters</p>
-                  <p className="text-gray-400">123 Emergency Street</p>
-                  <p className="text-gray-400">New York, NY 10001</p>
+                  <p className="font-semibold">Quartier général</p>
+                  <p className="text-gray-400">Ben Arous, Tunisie</p>
+                  <p className="text-gray-400">Res Yasm 2 - BLID App 3</p>
                 </div>
               </div>
             </div>
@@ -148,8 +144,8 @@ const Footer = () => {
                 <Shield className="w-8 h-8 text-blue-400" />
               </div>
               <div>
-                <h4 className="font-bold">Insured Service</h4>
-                <p className="text-sm text-gray-400">Fully insured</p>
+                <h4 className="font-bold">Service assuré</h4>
+                <p className="text-sm text-gray-400">entièrement assuré</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
@@ -158,7 +154,7 @@ const Footer = () => {
               </div>
               <div>
                 <h4 className="font-bold">24/7 Service</h4>
-                <p className="text-sm text-gray-400">Always available</p>
+                <p className="text-sm text-gray-400">Toujours disponible</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
@@ -166,8 +162,8 @@ const Footer = () => {
                 <Truck className="w-8 h-8 text-blue-400" />
               </div>
               <div>
-                <h4 className="font-bold">Fast Response</h4>
-                <p className="text-sm text-gray-400">Under 30 mins</p>
+                <h4 className="font-bold">Réponse rapide</h4>
+                <p className="text-sm text-gray-400">Moins de 30 minutes</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
@@ -175,8 +171,8 @@ const Footer = () => {
                 <MapPin className="w-8 h-8 text-blue-400" />
               </div>
               <div>
-                <h4 className="font-bold">Nationwide</h4>
-                <p className="text-sm text-gray-400">50+ cities</p>
+                <h4 className="font-bold">À l'échelle nationale</h4>
+                <p className="text-sm text-gray-400">20+ villes</p>
               </div>
             </div>
           </div>
@@ -197,13 +193,6 @@ const Footer = () => {
               <Link to="/terms" className="text-gray-500 hover:text-white transition-colors">
                 Terms of Service
               </Link>
-              <Link to="/sitemap" className="text-gray-500 hover:text-white transition-colors">
-                Sitemap
-              </Link>
-              <div className="flex items-center text-blue-400">
-                <Shield className="w-4 h-4 mr-2" />
-                <span>SSL Secured</span>
-              </div>
             </div>
           </div>
         </div>

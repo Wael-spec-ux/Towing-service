@@ -8,6 +8,7 @@ export function EditTruckModal({setshowEditTruckModal, truckPlate,setTrucks,setU
   const [NextMaintenance,setNextMaintenance]=useState(null)
   const [NewPlate,setNewPlate]=useState(null)
   const [NewName,setNewName]=useState(null)
+  const [NewStatus,setNewStatus]=useState(null)
     useEffect(()=>{
         const fetchTrucks=async()=>{
             const data=await GetTruckByPlate(truckPlate);
@@ -17,13 +18,14 @@ export function EditTruckModal({setshowEditTruckModal, truckPlate,setTrucks,setU
             setNextMaintenance(data.nextMaintenance)
             setNewPlate(data.plate)
             setNewName(data.type)
+            setNewStatus(data.status)
         }
         fetchTrucks();
   },[])
   const Admintoken=localStorage.getItem('adminToken') 
   const handEditTruck =async()=>{
     const TruckPlate=NewPlate.toUpperCase();
-    await updateTruckMaintenance(LastMaintenance,NextMaintenance,NewLocation,truck._id,TruckPlate,NewName,truck.driver);
+    await updateTruckMaintenance(LastMaintenance,NextMaintenance,NewLocation,truck._id,TruckPlate,NewName,truck.driver,NewStatus);
     setNewLocation(null);
     if (Admintoken) {
       const update=await GetAllTrucks();
@@ -76,18 +78,6 @@ export function EditTruckModal({setshowEditTruckModal, truckPlate,setTrucks,setU
               />
             </div>
             <div>
-              {/* <label className="block text-sm font-medium text-gray-300 mb-2">Chauffeur *</label>
-              <select
-                value={truck?.driver}
-                onChange={(e) => setNewDriver({ driver: e.target.value })}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Sélectionner un chauffeur</option>
-                {drivers?.filter(d => d.assignedTruck === null).map(driver => (
-                  <option key={driver._id} value={driver.name}>{driver.name}</option>
-                ))}
-              </select> */}
-              {/* Error message */}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Dernière Maintenance</label>
@@ -106,6 +96,18 @@ export function EditTruckModal({setshowEditTruckModal, truckPlate,setTrucks,setU
                 onChange={(e) => setNextMaintenance(e.target.value)}
                 className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+            </div>
+                        <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Truck Status:</label>
+              <select
+                value={NewStatus}
+                onChange={(e) => setNewStatus( e.target.value )}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                  <option value="Opérationnel">Opérationnel</option>
+                  <option value="En réparation">En réparation</option>
+
+              </select>
             </div>
             <div className="flex justify-end space-x-3 pt-4">
               <button

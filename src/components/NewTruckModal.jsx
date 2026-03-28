@@ -53,7 +53,6 @@ export function NewTruckModal({ newTruck, setNewTruck, drivers, handleAddTruck, 
                   <option key={driver._id} value={driver.name}>{driver.name}</option>
                 ))}
               </select>
-              {/* Error message */}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Dernière Maintenance</label>

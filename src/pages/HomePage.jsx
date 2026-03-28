@@ -16,7 +16,7 @@ const HomePage = () => {
           <div className="mb-4">
             <span className="inline-flex items-center px-4 py-2 rounded-full bg-blue-900/30 text-blue-400 text-sm font-medium mb-6">
               <Shield className="w-4 h-4 mr-2" />
-              Trusted Nationwide Service
+              Service national de confiance
             </span>
           </div>
 
@@ -29,9 +29,9 @@ const HomePage = () => {
           </h1>
 
           <p className="text-xl text-gray-300 mb-10 leading-relaxed max-w-2xl">
-            Top Depannage provides rapid response vehicle towing and transport services 
-            across the country. Our professional team ensures your vehicle's safety 
-            with 24/7 availability and real-time tracking.
+            Top Dépannage propose des services de remorquage et de transport de véhicules à intervention rapide
+partout au pays. Notre équipe de professionnels assure la sécurité de votre véhicule
+grâce à une disponibilité 24h/24 et 7j/7 et un suivi en temps réel.
           </p>
 
           {/* Features Grid */}
@@ -42,7 +42,7 @@ const HomePage = () => {
               </div>
               <div>
                 <h3 className="font-semibold text-white">24/7 Service</h3>
-                <p className="text-sm text-gray-400">Always available</p>
+                <p className="text-sm text-gray-400">Toujours disponible</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
@@ -50,8 +50,8 @@ const HomePage = () => {
                 <MapPin className="w-6 h-6 text-blue-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-white">Nationwide</h3>
-                <p className="text-sm text-gray-400">Coverage everywhere</p>
+                <h3 className="font-semibold text-white">À l'échelle nationale</h3>
+                <p className="text-sm text-gray-400">Couverture partout</p>
               </div>
             </div>
           </div>
@@ -77,14 +77,14 @@ const HomePage = () => {
           <div className="flex items-center space-x-8 mt-12 pt-8 border-t border-gray-800">
             <div>
               <div className="text-3xl font-bold text-white">10k+</div>
-              <div className="text-sm text-gray-400">Vehicles Saved</div>
+              <div className="text-sm text-gray-400">Véhicules sauvés </div>
             </div>
             <div>
               <div className="text-3xl font-bold text-white">24/7</div>
-              <div className="text-sm text-gray-400">Response Time</div>
+              <div className="text-sm text-gray-400">Temps de réponse</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-white">50+</div>
+              <div className="text-3xl font-bold text-white">20+</div>
               <div className="text-sm text-gray-400">Cities</div>
             </div>
           </div>

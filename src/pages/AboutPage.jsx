@@ -21,7 +21,7 @@ const AboutPage = () => {
     }, []);
   const teamMembers = [
     {
-      name: "Mohamed Ali",
+      name: "Radhouane Ben Hamda",
       role: "Fondateur & CEO",
       experience: "15+ années d'expérience",
       bio: "Expert en dépannage routier avec une passion pour l'assistance automobile"
@@ -33,7 +33,7 @@ const AboutPage = () => {
       bio: "Spécialiste en logistique et coordination d'urgence"
     },
     {
-      name: "Fatma Bouazizi",
+      name: "Gadour Ben Hamda",
       role: "Responsable Clientèle",
       experience: "8 années d'expérience",
       bio: "Dédiée à l'excellence du service client et à la satisfaction"
@@ -116,7 +116,7 @@ const AboutPage = () => {
               
               <div className="space-y-6">
                 <p className="text-gray-300 leading-relaxed">
-                  Fondée en 2010 par Mohamed Ali, Top Dépannage est née d'une simple vision : 
+                  Fondée en 2013 par Radhouane Ben Hamda, Top Dépannage est née d'une simple vision : 
                   fournir un service de dépannage automobile digne de confiance pour les 
                   résidents de Ben Arous.
                 </p>
