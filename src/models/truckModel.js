@@ -8,7 +8,7 @@ const truckSchema = new mongoose.Schema(
     driver: { type: String, default: null },
     lastMaintenance: { type: Date, default: null },
     nextMaintenance: { type: Date, default: null },
-    status: { type: String, enum: ['Opérationnel', 'En mission', 'En réparation'], default: 'Opérationnel' },
+    status: { type: String, enum: ['Opérationnel','En réparation'], default: 'Opérationnel' },
 
   },
   { timestamps: true }

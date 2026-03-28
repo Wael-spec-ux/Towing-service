@@ -1,7 +1,7 @@
 import express from 'express';
 import { createReservation,getAllReservations,editReservation,deleteReservation ,updateAssignedDriverAndStatus,findTasksByAssignedDriverEqualsToDriverId,changeTaskStatus} from '../controllers/reservationController.js';
 import { createDriver,updateDriver ,getAllDrivers,deleteDriver,updateDriverStatusAndMissions,updateDriverStatus,getDriverById,AssignTruck} from '../controllers/DriverController.js'; 
-import { createTruck,updateTruck,getAllTrucks,deleteTruck,assignTruckToDriver,getTruckByPlate,AssignDriverToTruck,updateTruckMaintenance} from '../controllers/truckController.js';
+import { createTruck,updateTruck,getAllTrucks,deleteTruck,assignTruckToDriver,getTruckByPlate,AssignDriverToTruck,updateTruckMaintenance,updateTruckStatus} from '../controllers/truckController.js';
 import { loginAdmin,createAdmin,updateAdminPassword} from '../controllers/AdminLogin.js';
 import { DriverLogin } from '../controllers/DriverLogin.js';
 import { verifyToken } from '../middleware/authMiddleware.js';
@@ -35,6 +35,7 @@ router.put('/assignTruckToDriver',verifyToken,(req,res)=>{assignTruckToDriver(re
 router.get('/getTruckByPlate/:plate',getTruckByPlate);
 router.put('/AssignDriverToTruck',verifyToken,(req,res)=>AssignDriverToTruck(req,res))
 router.put('/updateTruckMaintenance',verifyToken,(req,res)=>{updateTruckMaintenance(req,res)})
+router.put('/updateTruckStatus',updateTruckStatus)
 //login admin router
 router.post("/login/admin",loginAdmin);
 router.post("/create/admin",createAdmin);

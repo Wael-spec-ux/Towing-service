@@ -116,13 +116,13 @@ export const getTruckByPlate = async (req, res) => {
 
 export const updateTruckMaintenance = async (req, res) => {
   try {
-    const {lastMaintenance,nextMaintenance,location,NewPlate,id,NewName,DriverName} = req.body;
+    const {lastMaintenance,nextMaintenance,location,NewPlate,id,NewName,DriverName,NewStatus} = req.body;
     const driver=await Driver.findOne({name:DriverName})
     if (!driver) {
   return res.status(404).json({ message: 'Driver not found' });
   }
-    if (!id || !{lastMaintenance} || !{nextMaintenance} || !{location} || !{NewPlate} || !{NewName} || !{DriverName}) {
-      console.log(lastMaintenance,nextMaintenance,location,NewPlate,id,DriverName)
+    if (!id || !{lastMaintenance} || !{nextMaintenance} || !{location} || !{NewPlate} || !{NewName} || !{DriverName} || !{NewStatus}) {
+      console.log(lastMaintenance,nextMaintenance,location,NewPlate,id,DriverName,NewName,NewStatus)
       return res.status(400).json({ message: 'All fields are required' });
     }
 
@@ -136,6 +136,7 @@ export const updateTruckMaintenance = async (req, res) => {
     truck.location = location;
     truck.plate = NewPlate;
     truck.type = NewName;
+    truck.status = NewStatus;
     await truck.save();
     driver.assignedTruck=NewPlate;
     await driver.save();
@@ -144,5 +145,28 @@ export const updateTruckMaintenance = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const updateTruckStatus = async (req, res) => {
+  try {
+    const { id, status } = req.body;
+
+    if (!id || !status) {
+      return res.status(400).json({ message: "id and status are required" });
+    }
+
+    const truck = await Truck.findById(id);
+    if (!truck) {
+      return res.status(404).json({ message: "truck not found" });
+    }
+
+    truck.status = status;
+    await truck.save();
+
+    return res.status(200).json({ message: "Truck status updated successfully" });
+
+  } catch {
+    return res.status(500).json({ message: "server error" });
   }
 };
