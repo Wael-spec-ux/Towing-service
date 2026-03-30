@@ -15,12 +15,18 @@ export const createDriver = async (req, res) => {
 };
 export const updateDriver = async (req, res) => {
   try {
-    const { id,name,phone,email,licenceNumber, status, currentLocation, assignedTruck, missions, truckId, rating ,password} = req.body;
+    const { id,name,phone,email,licenceNumber, currentLocation, assignedTruck, rating} = req.body;
     const driver = await Driver.findById(id);
     if (!driver) {
       return res.status(404).json({ message: 'Driver not found' });
     }
-    const updatedDriver = await Driver.findByIdAndUpdate(id, { name, phone, email, licenceNumber, status, currentLocation, assignedTruck, missions, truckId, rating, password }, { new: true });
+    const truck = await Truck.findById(driver.truckId)
+    if (!truck) {
+      return res.status(404).json({message:"Truck not found"})
+    }
+    const updatedDriver = await Driver.findByIdAndUpdate(id, { name, phone, email, licenceNumber, currentLocation, assignedTruck, rating }, { new: true });
+    truck.plate = assignedTruck
+    await truck.save();
     res.status(200).json({ message: 'Driver updated successfully', driver: updatedDriver });
   } catch (error) {
     console.error(error);
@@ -105,10 +111,15 @@ export const AssignTruck = async (req, res) => {
     if (!driver) {
       return res.status(404).json({ message: "Driver not found" });
     }
-
+    const truck=await Truck.findOne({plate:TruckPlate})
+    if (!truck) {
+      return res.status(404).json({message:"truck not found"})
+    }
     driver.assignedTruck = TruckPlate;
+    driver.truckId = truck._id
     await driver.save();
-
+    truck.driver = driver.name
+    await truck.save();
     res.status(200).json({ message: 'truck assigned' });
 
   } catch (error) {
@@ -116,3 +127,21 @@ export const AssignTruck = async (req, res) => {
     res.status(500).json({ message: 'server error' });
   }
 }
+export const DeleteDriverFromTruckCard = async (req, res) => {
+  try {
+    const { truckPlate } = req.body;
+
+    const truck = await Truck.findOne({ plate: truckPlate });
+    if (!truck) {
+      return res.status(404).json({ message: "Truck not found" });
+    }
+
+    truck.driver = "";
+    await truck.save();
+
+    return res.status(200).json({ message: "Driver deleted from truck card" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};

@@ -1,6 +1,6 @@
 import express from 'express';
 import { createReservation,getAllReservations,editReservation,deleteReservation ,updateAssignedDriverAndStatus,findTasksByAssignedDriverEqualsToDriverId,changeTaskStatus} from '../controllers/reservationController.js';
-import { createDriver,updateDriver ,getAllDrivers,deleteDriver,updateDriverStatusAndMissions,updateDriverStatus,getDriverById,AssignTruck} from '../controllers/DriverController.js'; 
+import { createDriver,updateDriver ,getAllDrivers,deleteDriver,updateDriverStatusAndMissions,updateDriverStatus,getDriverById,AssignTruck,DeleteDriverFromTruckCard} from '../controllers/DriverController.js'; 
 import { createTruck,updateTruck,getAllTrucks,deleteTruck,assignTruckToDriver,getTruckByPlate,AssignDriverToTruck,updateTruckMaintenance,updateTruckStatus} from '../controllers/truckController.js';
 import { loginAdmin,createAdmin,updateAdminPassword} from '../controllers/AdminLogin.js';
 import { DriverLogin } from '../controllers/DriverLogin.js';
@@ -26,6 +26,7 @@ router.post('/login/driver',DriverLogin);
 router.put('/updateDriverStatus',verifyToken,(req,res)=>{updateDriverStatus(req,res)});
 router.get('/getDriverById/:id',getDriverById);
 router.put('/AssignTruck',verifyToken,(req,res)=>{AssignTruck(req,res)});
+router.put('/DeleteDriverFromTruckCard',verifyToken,(req,res)=>{DeleteDriverFromTruckCard(req,res)})
 //Truck routes
 router.post('/createTruck', createTruck);
 router.put('/updateTruck', updateTruck);
