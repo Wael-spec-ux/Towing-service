@@ -126,7 +126,7 @@ export function DeleteDriverModal({ isOpen, driverName, onConfirm, onCancel }) {
  
           <div className="dcm-icon-wrap">🗑️</div>
  
-          <h2 className="dcm-title">Supprimer le camion ?</h2>
+          <h2 className="dcm-title">Supprimer le Chauffeur ?</h2>
  
           <p className="dcm-body">
             Vous êtes sur le point de supprimer cette Chauffeur:<span className="dcm-driver">{driverName}</span>.

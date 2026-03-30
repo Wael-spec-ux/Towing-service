@@ -37,6 +37,7 @@
 import { DeleteDriverModal } from "../components/DeleteDriverModel";
 import { AssignTruckModal } from "../components/AssignTruckModal";
 import { EditTruckModal } from "../components/EditMaintenance";
+import { EditDriverModal } from "../components/EditDriverModal";
   const AdminDashboard = () => {
     const [reservations, setReservations] = useState([]);
     useEffect(() => {
@@ -98,6 +99,7 @@ import { EditTruckModal } from "../components/EditMaintenance";
     const [showAssignTruckModal,setshowAssignTruckModal]=useState(false);
     const [truckPlate,setTruckPlate]=useState("");
     const [showEditTruckModal,setshowEditTruckModal]=useState(false)
+    const [ShowEditDriver,setShowEditDriver]=useState(false)
     const stats = {
       totalReservations: reservations.length,
       pendingReservations: reservations.filter(r => r.status === "En attente").length,
@@ -256,6 +258,7 @@ const handleAssignDriver = async (reservationId, driverId) => {
         case "Problème camion": return "bg-red-500/20 text-red-400";
         case "Opérationnel": return "bg-green-500/20 text-green-400";
         case "En réparation": return "bg-red-500/20 text-red-400";
+        case "En congé":return "bg-amber-500/20 text-amber-400";
         default: return "bg-gray-500/20 text-gray-400";
       }
     };
@@ -436,7 +439,7 @@ const handleAssignDriver = async (reservationId, driverId) => {
                     </div>
                     <div className="flex items-center">
                       <Package className="w-4 h-4 mr-2 text-gray-400" />
-                      Missions aujourd'hui : <span className="font-bold ml-1">{driver.missions  || "0"}</span>
+                      Missions : <span className="font-bold ml-1">{driver.missions  || "0"}</span>
                     </div>
                     <div className="flex items-center">
                       <span className="text-gray-400 mr-2">★</span>
@@ -449,6 +452,12 @@ const handleAssignDriver = async (reservationId, driverId) => {
                       className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-700/50 rounded-lg"
                     >
                       <Trash2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => {setSelectedDriver(driver._id);setShowEditDriver(true)}}
+                      className="p-2 text-gray-400 hover:text-blue-400 hover:bg-gray-700/50 rounded-lg"
+                    >
+                      <Edit className="w-4 h-4" />
                     </button>
                     {!driver.assignedTruck && <button
                     onClick={() => { setshowAssignTruckModal(true); setSelectedDriver(driver); }}
@@ -601,6 +610,14 @@ const handleAssignDriver = async (reservationId, driverId) => {
           setshowEditTruckModal={setshowEditTruckModal}
           setTrucks={setTrucks}
           setUpdateTruck={null}
+          />
+        }
+        {
+          ShowEditDriver && <EditDriverModal
+          setSelectedDriver={setSelectedDriver}
+          setShowEditDriver={setShowEditDriver}
+          selectedDriver={selectedDriver}
+          setDrivers={setDrivers}
           />
         }
       </div>

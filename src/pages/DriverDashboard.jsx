@@ -33,6 +33,7 @@ import { useEffect } from "react";
 import { sendProblemMessage } from "../api/DriverQickActions";
 import { RequestRestDay } from "../api/DriverQickActions";
 import { EditTruckModal } from "../components/EditMaintenance";
+import { EditDriverModal } from "../components/EditDriverModal";
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const statusStyles = {
   // "En attente": "bg-amber-500/15 text-amber-400 border border-amber-500/30",
@@ -94,6 +95,8 @@ export default function DriverDashboard() {
   const [submitted, setSubmitted] = useState(null);
   const [showEditTruckModal,setshowEditTruckModal]=useState(false)
   const [truckPlate,setTruckPlate]=useState(null)
+  const [ShowEditDriver,setShowEditDriver]=useState(false)
+  const [SelectedDriver,setSelectedDriver]=useState(null)
   useEffect(() => {
     const fetchDriver = async () => {
       const driverId = localStorage.getItem('driverId');
@@ -225,17 +228,24 @@ export default function DriverDashboard() {
               <div>
                 <h1 className="text-xl font-bold text-white">{DRIVER.name}</h1>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-gray-400">{DRIVER.email}</span>
+                  <span className="text-xs text-gray-400">{DRIVER.currentLocation}</span>
                   <span className="text-gray-600">•</span>
                   <div className="flex items-center gap-1 text-amber-400">
                     <Star className="w-3.5 h-3.5 fill-amber-400" />
                     <span className="text-xs font-medium">{DRIVER.rating}/5</span>
                   </div>
+                <button
+                onClick={() => {setSelectedDriver(driver._id);setShowEditDriver(true)}}
+                className="p-2 text-gray-400 hover:text-blue-400 hover:bg-gray-700/50 rounded-lg"
+              >
+                <Edit className="w-4 h-4" />
+              </button>
                 </div>
               </div>
             </div>
 
             {/* Status selector */}
+            
             <div className="flex items-center gap-2 bg-gray-900/60 border border-gray-700/60 rounded-xl px-4 py-2.5 self-start sm:self-auto">
               <Activity className="w-4 h-4 text-gray-400" />
               <select
@@ -386,7 +396,7 @@ export default function DriverDashboard() {
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-700/60">
             <div className="flex items-center gap-2">
               <Package className="w-5 h-5 text-sky-400" />
-              <h2 className="font-semibold text-white">Mes Missions du Jour</h2>
+              <h2 className="font-semibold text-white">Mes Missions </h2>
             </div>
             <span className="text-xs text-gray-500">
               {new Date().toLocaleDateString("fr-FR")}
@@ -658,6 +668,14 @@ export default function DriverDashboard() {
           setshowEditTruckModal={setshowEditTruckModal}
           setTrucks={null}
           setUpdateTruck={setTruck}
+          />
+        }
+        {
+          ShowEditDriver && <EditDriverModal
+          setSelectedDriver={setSelectedDriver}
+          setShowEditDriver={setShowEditDriver}
+          selectedDriver={SelectedDriver}
+          setDrivers={setDriver}
           />
         }
     </div>

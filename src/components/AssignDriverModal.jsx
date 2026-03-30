@@ -4,7 +4,7 @@ export function AssignDriverModal({ selectedReservation, availableDrivers, handl
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
         <div className="bg-gray-800 rounded-2xl border border-gray-700 max-w-md w-full p-6">
           <h3 className="text-xl font-bold text-white mb-6">
-            Assigner un Chauffeur — {selectedReservation?._id}
+            Assigner un Chauffeur au Client {selectedReservation.firstName}
           </h3>
           <div className="mb-4 p-4 bg-gray-900/50 rounded-lg">
             <div className="font-medium text-white mb-2">Détails de la mission :</div>
