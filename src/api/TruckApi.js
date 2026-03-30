@@ -1,7 +1,7 @@
 export const GetAllTrucks = async () => {
     const response = await fetch("http://localhost:3000/getAllTrucks",{
                 headers:{
-                    "Authorization": `Bearer ${localStorage.getItem('adminToken')}`
+                    "Authorization": `Bearer ${localStorage.getItem('adminToken') || localStorage.getItem('driverToken')}`
                 }});
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();

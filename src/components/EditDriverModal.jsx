@@ -4,13 +4,13 @@ import { AssignTruck, DeleteDriverFromTruckCard, GetAllDrivers, GetDriverById, U
 import { GetAllTrucks } from "../api/TruckApi";
 export function EditDriverModal({setSelectedDriver,setShowEditDriver,selectedDriver,setDrivers}) {
     const[driver,setDriver]=useState(null);
-    const[name,setName]=useState(null);
-    const[phone,setPhone]=useState(null);
-    const[email,setEmail]=useState(null);
-    const[licenceNumber,setLicenceNumber]=useState(null);
-    const[currentLocation,setcurrentLocation]=useState(null);
-    const[assignedTruck,setassignedTruck]=useState(null);
-    const[rating,setRating]=useState(null);
+    const[name,setName]=useState("");
+    const[phone,setPhone]=useState("");
+    const[email,setEmail]=useState("");
+    const[licenceNumber,setLicenceNumber]=useState("");
+    const[currentLocation,setcurrentLocation]=useState("");
+    const[assignedTruck,setassignedTruck]=useState("");
+    const[rating,setRating]=useState("");
     const[trucks,settrucks]=useState([])
     const[OldAssignedTruckValue,setOldAssignedTruckValue]=useState(null)
     const AdminToken=(localStorage.getItem('adminToken') || null)
